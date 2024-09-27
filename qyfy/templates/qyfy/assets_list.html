@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Assets List</h1>
+        
+        <!-- Button to download the assets list -->
+        <a href="{% url 'assets-export' %}" class="btn btn-primary mb-3">Download Assets as XLSX</a>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date Received</th>
+                    <th>Person Receiving</th>
+                    <th>Asset Description</th>
+                    <th>Serial Number</th>
+                    <th>KENET Tag</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asset in assets %}
+                <tr>
+                    <td>{{ asset.date_received }}</td>
+                    <td>{{ asset.person_receiving }}</td>
+                    <td>{{ asset.asset_description }}</td>
+                    <td>{{ asset.serial_number }}</td>
+                    <td>{{ asset.kenet_tag }}</td>
+                    <td>{{ asset.location }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
