@@ -16,3 +16,9 @@ class AssetsSerializer(serializers.ModelSerializer):
             'serial_number', 'kenet_tag', 'location', 'status', 
             'date_received', 'new_location'
         ]
+        
+    def create(self, validated_data):
+        category_data = validated_data.pop('category')
+        category, created = Category.objects.get_or_create(**category_data)
+        asset = Assets.objects.create(category=category, **validated_data)
+        return asset
