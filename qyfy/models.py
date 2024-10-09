@@ -6,6 +6,11 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 class Assets(models.Model):
     STATUS_CHOICES = [
@@ -21,7 +26,12 @@ class Assets(models.Model):
     asset_description = models.TextField()
     serial_number = models.CharField(max_length=100, unique=True)
     kenet_tag = models.CharField(max_length=100, unique=True)
-    location = models.CharField(max_length=200)
+    # Foreign key to the Location model for the primary location
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
+    
+    # Foreign key to the same Location model for the new location
+    new_location = models.ForeignKey(Location, on_delete=models.SET_NULL, related_name='new_location', blank=True, null=True)
+
     
     # Status field with choices and default value
     status = models.CharField(
@@ -32,14 +42,6 @@ class Assets(models.Model):
         null=True
     )
 
-    # New location field with blank, null, and default value
-    new_location = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        default='University of Nairobi KENET STORE'
-    )
-    
     # Foreign key to Category model
     category = models.ForeignKey(Category, on_delete=models.CASCADE,blank=True,null=True)
 
