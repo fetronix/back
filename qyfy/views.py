@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Assets
-from .serializers import AssetsSerializer
+from .models import *
+from .serializers import AssetsSerializer,CategorySerializer
 
 class AssetsListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
@@ -12,6 +12,10 @@ class AssetsListCreate(generics.ListCreateAPIView):
 class AssetsListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
     serializer_class = AssetsSerializer
+    
+class CategoryListCreate(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
 from django.shortcuts import render
 from rest_framework import generics
