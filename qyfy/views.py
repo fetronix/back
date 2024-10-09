@@ -13,6 +13,21 @@ class AssetsListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
     serializer_class = AssetsSerializer
 
+from django.shortcuts import render
+from rest_framework import generics
+from .models import Assets
+from .serializers import AssetsSerializer
+
+class AssetsListCreate(generics.ListCreateAPIView):
+    queryset = Assets.objects.all()
+    serializer_class = AssetsSerializer
+
+
+
+class AssetsListCreate(generics.ListCreateAPIView):
+    queryset = Assets.objects.all()
+    serializer_class = AssetsSerializer
+
 import openpyxl
 from django.http import HttpResponse
 from rest_framework import generics
@@ -51,6 +66,15 @@ class AssetsExportView(generics.ListAPIView):
         # Save the workbook to the response
         workbook.save(response)
         return response
+
+
+
+from django.shortcuts import render
+from .models import Assets
+
+def assets_list(request):
+    assets = Assets.objects.all()
+    return render(request, 'qyfy/assets_list.html', {'assets': assets})
 
 
 
