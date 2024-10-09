@@ -7,12 +7,6 @@ class AssetsListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
     serializer_class = AssetsSerializer
 
-
-
-class AssetsListCreate(generics.ListCreateAPIView):
-    queryset = Assets.objects.all()
-    serializer_class = AssetsSerializer
-    
 class CategoryListCreate(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
