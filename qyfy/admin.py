@@ -17,3 +17,4 @@ class AssetsAdmin(admin.ModelAdmin):
 # Register the Assets model with the custom admin class
 admin.site.register(Assets, AssetsAdmin)
 admin.site.register(Category)
+admin.site.register(Location)
