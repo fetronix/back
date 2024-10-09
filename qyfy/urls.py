@@ -9,6 +9,9 @@ urlpatterns = [
     path('category/view', CategoryListCreate.as_view(), name='category-list-create'),
     path('category/', CategoryListCreate.as_view(), name='category-list-create'),
     
+    path('location/view', LocationListCreate.as_view(), name='location-list-create'),
+    path('location/', LocationListCreate.as_view(), name='location-list-create'),
+    
     path('assets/export/', AssetsExportView.as_view(), name='assets-export'),
     
     path('assets/all/', assets_list, name='assets-list'),  # New URL for viewing assets
