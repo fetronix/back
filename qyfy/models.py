@@ -1,4 +1,18 @@
 from django.db import models
+from django.utils import timezone
+
+class Delivery(models.Model):
+    supplier_name = models.CharField(max_length=255)
+    quantity = models.PositiveIntegerField()
+    date_delivered = models.DateField(default=timezone.now)  # Automatically set to the current date
+    person_receiving = models.CharField(max_length=255)
+    invoice_file = models.FileField(upload_to='invoices/')  # Specify the directory for file uploads
+    invoice_number = models.CharField(max_length=100)
+    project = models.CharField(max_length=255)
+    comments = models.TextField(blank=True)  # Optional field for comments
+
+    def __str__(self):
+        return f'Delivery from {self.supplier_name} on {self.date_delivered}'
 
 class Category(models.Model):
     name = models.CharField(max_length=100)

@@ -18,3 +18,4 @@ class AssetsAdmin(admin.ModelAdmin):
 admin.site.register(Assets, AssetsAdmin)
 admin.site.register(Category)
 admin.site.register(Location)
+admin.site.register(Delivery)
