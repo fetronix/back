@@ -52,3 +52,9 @@ class AssetsSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return asset
+    
+    
+class DeliverySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Delivery
+        fields = ['id', 'supplier_name', 'quantity', 'person_receiving', 'invoice_file', 'invoice_number', 'project', 'comments']

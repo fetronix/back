@@ -15,4 +15,6 @@ urlpatterns = [
     path('assets/export/', AssetsExportView.as_view(), name='assets-export'),
     
     path('assets/all/', assets_list, name='assets-list'),  # New URL for viewing assets
+    
+    path('deliveries/', DeliveryListCreateAPIView.as_view(), name='delivery-list-create'),
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import *
-from .serializers import AssetsSerializer,CategorySerializer,LocationSerializer
+from .serializers import AssetsSerializer,CategorySerializer,LocationSerializer,DeliverySerializer
 
 class AssetsListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
@@ -86,3 +86,8 @@ from .models import Assets
 def assets_list(request):
     assets = Assets.objects.all()
     return render(request, 'qyfy/assets_list.html', {'assets': assets})
+
+
+class DeliveryListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Delivery.objects.all()
+    serializer_class = DeliverySerializer
