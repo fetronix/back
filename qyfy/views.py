@@ -19,12 +19,17 @@ from django.shortcuts import render
 from rest_framework import generics
 from .models import Assets
 from .serializers import AssetsSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-class AssetsListCreate(generics.ListCreateAPIView):
-    queryset = Assets.objects.all()
-    serializer_class = AssetsSerializer
-
-
+class AssetCreateView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AssetsSerializer(data=request.data)
+        if serializer.is_valid():
+            asset = serializer.save()
+            return Response(AssetsSerializer(asset).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AssetsViewListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()

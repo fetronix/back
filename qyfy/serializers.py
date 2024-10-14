@@ -11,6 +11,7 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = ['id', 'name']
 
+
 class AssetsSerializer(serializers.ModelSerializer):
     category = CategorySerializer()  # Serialize category details
     location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
@@ -32,12 +33,15 @@ class AssetsSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Handle category data
         category_data = validated_data.pop('category')
-        category, created = Category.objects.get_or_create(**category_data)
+        
+        # Use get_or_create for category, but ensure to handle it correctly
+        category, created = Category.objects.get_or_create(
+            name=category_data['name'],  # Assuming the category has a 'name' field
+            defaults=category_data        # Use defaults to set other fields if necessary
+        )
 
         # Handle location data
-        location_data = validated_data.pop('location')
-        location, created = Location.objects.get_or_create(**location_data)
-
+        location = validated_data.pop('location')  # Here we use the primary key of the location
 
         # Create the asset with all validated data
         asset = Assets.objects.create(
@@ -46,8 +50,16 @@ class AssetsSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return asset
-    
-    
+
+    def validate(self, attrs):
+        """
+        Override the validate method to include custom validation if needed.
+        """
+        # Example validation (you can customize this)
+        if 'serial_number' not in attrs or not attrs['serial_number']:
+            raise serializers.ValidationError({"serial_number": "This field is required."})
+        
+        return attrs
 class DeliverySerializer(serializers.ModelSerializer):
     class Meta:
         model = Delivery
