@@ -14,7 +14,6 @@ class LocationSerializer(serializers.ModelSerializer):
 class AssetsSerializer(serializers.ModelSerializer):
     category = CategorySerializer()  # Serialize category details
     location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
-    # new_location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
 
     class Meta:
         model = Assets
@@ -26,7 +25,6 @@ class AssetsSerializer(serializers.ModelSerializer):
             'serial_number',
             'kenet_tag',
             'location',  # Primary location
-            # 'new_location',  # New location
             'status',
             'category',
         ]
@@ -40,15 +38,11 @@ class AssetsSerializer(serializers.ModelSerializer):
         location_data = validated_data.pop('location')
         location, created = Location.objects.get_or_create(**location_data)
 
-        # Handle new location data
-        new_location_data = validated_data.pop('new_location')
-        new_location, created = Location.objects.get_or_create(**new_location_data)
 
         # Create the asset with all validated data
         asset = Assets.objects.create(
             category=category,
             location=location,
-            new_location=new_location,
             **validated_data
         )
         return asset
