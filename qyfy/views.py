@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import *
-from .serializers import AssetsSerializer,CategorySerializer,LocationSerializer,DeliverySerializer
+from .serializers import *
 
 class AssetsListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
@@ -26,9 +26,9 @@ class AssetsListCreate(generics.ListCreateAPIView):
 
 
 
-class AssetsListCreate(generics.ListCreateAPIView):
+class AssetsViewListCreate(generics.ListCreateAPIView):
     queryset = Assets.objects.all()
-    serializer_class = AssetsSerializer
+    serializer_class = ViewAssetsSerializer
 
 import openpyxl
 from django.http import HttpResponse
@@ -79,13 +79,6 @@ def assets_list(request):
     return render(request, 'qyfy/assets_list.html', {'assets': assets})
 
 
-
-from django.shortcuts import render
-from .models import Assets
-
-def assets_list(request):
-    assets = Assets.objects.all()
-    return render(request, 'qyfy/assets_list.html', {'assets': assets})
 
 
 class DeliveryListCreateAPIView(generics.ListCreateAPIView):
