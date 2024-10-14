@@ -14,7 +14,7 @@ class LocationSerializer(serializers.ModelSerializer):
 class AssetsSerializer(serializers.ModelSerializer):
     category = CategorySerializer()  # Serialize category details
     location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
-    new_location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
+    # new_location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
 
     class Meta:
         model = Assets
@@ -26,7 +26,7 @@ class AssetsSerializer(serializers.ModelSerializer):
             'serial_number',
             'kenet_tag',
             'location',  # Primary location
-            'new_location',  # New location
+            # 'new_location',  # New location
             'status',
             'category',
         ]
