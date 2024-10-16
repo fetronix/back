@@ -4,7 +4,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'assets', AssetsViewSet)
+router.register(r'assets', AssetViewSet)
 
 urlpatterns = [
     path('assets/', AssetCreateView.as_view(), name='assets-list-create'),

@@ -102,12 +102,11 @@ from .serializers import AssetsUpdateSerializer
 # views.py (Django)
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .models import Asset
-from .serializers import AssetSerializer
+from .models import Assets
 
 class AssetViewSet(viewsets.ModelViewSet):
-    queryset = Asset.objects.all()
-    serializer_class = AssetSerializer
+    queryset = Assets.objects.all()
+    serializer_class = AssetsUpdateSerializer
 
     def update(self, request, *args, **kwargs):
         asset = self.get_object()
