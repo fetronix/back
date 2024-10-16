@@ -61,3 +61,5 @@ class Assets(models.Model):
 
     def __str__(self):
         return f"{self.asset_description} ({self.serial_number})"
+
+

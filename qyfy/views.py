@@ -89,3 +89,26 @@ def assets_list(request):
 class DeliveryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Delivery.objects.all()
     serializer_class = DeliverySerializer
+    
+    
+
+
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Assets
+from .serializers import AssetsUpdateSerializer
+
+class AssetsViewSet(viewsets.ModelViewSet):
+    queryset = Assets.objects.all()
+    
+    # Define your serializer classes based on the action
+    def get_serializer_class(self):
+        if self.action == 'partial_update':  # Use update serializer for partial updates
+            return AssetsUpdateSerializer
+        return super().get_serializer_class()
+
+    def partial_update(self, request, *args, **kwargs):
+        # Call the super method to perform the partial update
+        return super().partial_update(request, *args, **kwargs)
+

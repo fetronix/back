@@ -1,6 +1,10 @@
 
-from django.urls import path
 from .views import *
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'assets', AssetsViewSet)
 
 urlpatterns = [
     path('assets/', AssetCreateView.as_view(), name='assets-list-create'),
@@ -17,4 +21,6 @@ urlpatterns = [
     path('assets/all/', assets_list, name='assets-list'),  # New URL for viewing assets
     
     path('deliveries/', DeliveryListCreateAPIView.as_view(), name='delivery-list-create'),
+    
+    path('', include(router.urls)),
 ]
