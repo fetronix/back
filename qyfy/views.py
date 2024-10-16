@@ -91,26 +91,22 @@ class DeliveryListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = DeliverySerializer
     
     
-
-
-from rest_framework import viewsets
-from rest_framework.response import Response
+# views.py
 from rest_framework import status
-from .models import Assets
-from .serializers import AssetsUpdateSerializer
-
-# views.py (Django)
-from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Assets
+from .serializers import AssetSerializer
 
-class AssetViewSet(viewsets.ModelViewSet):
-    queryset = Assets.objects.all()
-    serializer_class = AssetsUpdateSerializer
+class AssetUpdateView(APIView):
+    def put(self, request, pk, format=None):
+        try:
+            asset = Assets.objects.get(pk=pk)
+        except Assets.DoesNotExist:
+            return Response({'error': 'Asset not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def update(self, request, *args, **kwargs):
-        asset = self.get_object()
-        asset.new_location = request.data.get('new_location', asset.new_location)
-        asset.status = request.data.get('status', asset.status)
-        asset.save()
-        return Response(AssetSerializer(asset).data)
+        serializer = AssetSerializer(asset, data=request.data, partial=True)  # partial=True allows updating only the provided fields
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

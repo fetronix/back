@@ -109,26 +109,11 @@ class ViewAssetsSerializer(serializers.ModelSerializer):
         return asset
 
 
-class AssetsUpdateSerializer(serializers.ModelSerializer):
-    new_location = serializers.PrimaryKeyRelatedField(
-        queryset=Location.objects.all(),
-        required=False  # Make it optional, in case it's not being updated
-    )
-    status = serializers.ChoiceField(
-        choices=Assets.STATUS_CHOICES,
-        required=False  # Make it optional
-    )
+# serializers.py
+from rest_framework import serializers
+from .models import Assets
 
+class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assets
-        fields = ['new_location', 'status']
-
-    def update(self, instance, validated_data):
-        # Update the instance fields with the provided validated data
-        if 'new_location' in validated_data:
-            instance.new_location = validated_data['new_location']
-        if 'status' in validated_data:
-            instance.status = validated_data['status']
-        
-        instance.save()  # Save the updated instance
-        return instance
+        fields = ['id', 'new_location', 'status']  # Include the fields you want to update
