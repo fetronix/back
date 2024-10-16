@@ -4,7 +4,7 @@ from django.utils import timezone
 class Delivery(models.Model):
     supplier_name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
-    date_delivered = models.DateField(default=timezone.now)  # Automatically set to the current date
+    date_delivered = models.DateField(default=timezone.now,auto_now_add=True)  # Automatically set to the current date
     person_receiving = models.CharField(max_length=255)
     invoice_file = models.FileField(upload_to='invoices/')  # Specify the directory for file uploads
     invoice_number = models.CharField(max_length=100)

@@ -63,7 +63,7 @@ class AssetsSerializer(serializers.ModelSerializer):
 class DeliverySerializer(serializers.ModelSerializer):
     class Meta:
         model = Delivery
-        fields = ['id', 'supplier_name', 'quantity', 'person_receiving', 'invoice_file', 'invoice_number', 'project', 'comments']
+        fields = ['id', 'supplier_name', 'quantity', 'person_receiving','invoice_file', 'invoice_number', 'project', 'comments']
         
         
 class ViewAssetsSerializer(serializers.ModelSerializer):
