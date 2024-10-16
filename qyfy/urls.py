@@ -19,4 +19,6 @@ urlpatterns = [
     path('deliveries/', DeliveryListCreateAPIView.as_view(), name='delivery-list-create'),
   
     path('assets/<int:pk>/', AssetUpdateView.as_view(), name='asset-update'),  # Update asset by ID
+    
+    path('login/', LoginView.as_view(), name='login'),
 ]

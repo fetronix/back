@@ -117,3 +117,28 @@ class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assets
         fields = ['id', 'new_location', 'status']  # Include the fields you want to update
+
+
+
+# serializers.py
+
+from rest_framework import serializers
+from django.contrib.auth import authenticate
+from rest_framework.exceptions import ValidationError
+from .models import CustomUser  # Adjust the import if necessary
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+
+        user = authenticate(username=email, password=password)
+
+        if user is None:
+            raise ValidationError('Invalid credentials, try again.')
+
+        attrs['user'] = user
+        return attrs

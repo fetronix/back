@@ -110,3 +110,34 @@ class AssetUpdateView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# views.py
+
+from django.contrib.auth import login
+from rest_framework import generics, status
+from rest_framework.response import Response
+from .serializers import LoginSerializer
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        # Log the user in (this will create a session for the user)
+        login(request, user)
+
+        # Return a response indicating that the login was successful
+        return Response({
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'role': user.role,
+            },
+            'message': 'Login successful.',
+        }, status=status.HTTP_200_OK)
