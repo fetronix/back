@@ -99,16 +99,19 @@ from rest_framework import status
 from .models import Assets
 from .serializers import AssetsUpdateSerializer
 
-class AssetsViewSet(viewsets.ModelViewSet):
-    queryset = Assets.objects.all()
-    
-    # Define your serializer classes based on the action
-    def get_serializer_class(self):
-        if self.action == 'partial_update':  # Use update serializer for partial updates
-            return AssetsUpdateSerializer
-        return super().get_serializer_class()
+# views.py (Django)
+from rest_framework import viewsets
+from rest_framework.response import Response
+from .models import Asset
+from .serializers import AssetSerializer
 
-    def partial_update(self, request, *args, **kwargs):
-        # Call the super method to perform the partial update
-        return super().partial_update(request, *args, **kwargs)
+class AssetViewSet(viewsets.ModelViewSet):
+    queryset = Asset.objects.all()
+    serializer_class = AssetSerializer
 
+    def update(self, request, *args, **kwargs):
+        asset = self.get_object()
+        asset.new_location = request.data.get('new_location', asset.new_location)
+        asset.status = request.data.get('status', asset.status)
+        asset.save()
+        return Response(AssetSerializer(asset).data)
