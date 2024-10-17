@@ -1,27 +1,10 @@
-
 from django.urls import path
-from .views import *
+from qyfy.views import LoginView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
-    path('assets/', AssetCreateView.as_view(), name='assets-list-create'),
-    path('assets/view', AssetsViewListCreate.as_view(), name='assets-list-create'),
-    
-    path('category/view', CategoryListCreate.as_view(), name='category-list-create'),
-    path('category/', CategoryListCreate.as_view(), name='category-list-create'),
-    
-    path('location/view', LocationListCreate.as_view(), name='location-list-create'),
-    path('location/', LocationListCreate.as_view(), name='location-list-create'),
-    
-    path('assets/export/', AssetsExportView.as_view(), name='assets-export'),
-    
-    path('assets/all/', assets_list, name='assets-list'),  # New URL for viewing assets
-    
-    path('deliveries/', DeliveryListCreateAPIView.as_view(), name='delivery-list-create'),
-  
-    path('assets/<int:pk>/', AssetUpdateView.as_view(), name='asset-update'),  # Update asset by ID
-    
-    path('login/', LoginView.as_view(), name='login'),
-    
-    path('api/cart/', cart_view, name='cart_view'),
-    path('api/add-to-cart/<int:asset_id>/', add_to_cart, name='add_to_cart'),
+    # Your existing paths
+    path('api/login/', LoginView.as_view(), name='login'),  # your existing login view if using token auth
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Obtain token
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh token
 ]

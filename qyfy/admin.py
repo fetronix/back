@@ -19,6 +19,7 @@ admin.site.register(Assets, AssetsAdmin)
 admin.site.register(Category)
 admin.site.register(Location)
 admin.site.register(Delivery)
+admin.site.register(Cart)
 
 
 # admin.py

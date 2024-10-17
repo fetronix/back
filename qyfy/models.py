@@ -33,6 +33,9 @@ class CustomUser(AbstractUser):
         self.full_clean()  # This calls the clean method to validate
         super().save(*args, **kwargs)  # Call the parent class's save method
 
+    class Meta:
+            verbose_name = 'User'
+            verbose_name_plural = 'Users'
 
 # Existing models
 class Delivery(models.Model):
@@ -47,18 +50,30 @@ class Delivery(models.Model):
 
     def __str__(self):
         return f'Delivery from {self.supplier_name} on {self.date_delivered}'
+    
+    
+    class Meta:
+            verbose_name = 'Delivery'
+            verbose_name_plural = 'Deliveries'
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+            verbose_name = 'Category'
+            verbose_name_plural = 'Categories'
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+    class Meta:
+            verbose_name = 'Location'
+            verbose_name_plural = 'Locations'
 
 class Assets(models.Model):
     STATUS_CHOICES = [
@@ -70,7 +85,7 @@ class Assets(models.Model):
     ]
 
     date_received = models.DateField(auto_now_add=True)
-    person_receiving = models.CharField(max_length=100)
+    person_receiving = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True,help_text="User who received the asset")
     asset_description = models.TextField()
     serial_number = models.CharField(max_length=100, unique=True)
     kenet_tag = models.CharField(max_length=100, unique=True)
@@ -91,10 +106,22 @@ class Assets(models.Model):
     def __str__(self):
         return f"{self.asset_description} ({self.serial_number})"
 
+    class Meta:
+            verbose_name = 'Asset'
+            verbose_name_plural = 'Assets'
+            
+            
+            
+from django.conf import settings
 
 class Cart(models.Model):
-    asset = models.OneToOneField(Assets, on_delete=models.CASCADE)
-    added_on = models.DateTimeField(auto_now_add=True)
-
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    asset = models.ForeignKey(Assets, on_delete=models.CASCADE)
+    new_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)  # Link to the Location model
+    
     def __str__(self):
-        return f"{self.asset.asset_description} added on {self.added_on}"
+        return f"{self.asset.asset_description}"
+    
+    class Meta:
+            verbose_name = 'Cart'
+            verbose_name_plural = 'Cart'
