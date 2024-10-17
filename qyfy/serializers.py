@@ -1,5 +1,9 @@
 from rest_framework import serializers
 from .models import *
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .serializers import *
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -142,3 +146,45 @@ class LoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class CartSerializer(serializers.ModelSerializer):
+    asset = AssetSerializer(read_only=True)  # Nested asset details
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'asset', 'added_on']
+        
+
+
+# Add an asset to the cart
+@api_view(['POST'])
+def add_to_cart(request, asset_id):
+    try:
+        asset = Assets.objects.get(id=asset_id)
+    except Assets.DoesNotExist:
+        return Response({'error': 'Asset not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Check if the asset is already in the cart
+    if Cart.objects.filter(asset=asset).exists():
+        return Response({'error': 'This asset is already in the cart.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the asset's status is 'instore'
+    if asset.status != 'instore':
+        return Response({'error': 'Only assets with "In Store" status can be added.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Add the asset to the cart
+    Cart.objects.create(asset=asset)
+
+    # Update the asset's status to 'pending_release'
+    asset.status = 'pending_release'
+    asset.save()
+
+    return Response({'message': 'Asset added to cart and status updated to "pending_release".'})
+
+# View all items in the cart
+@api_view(['GET'])
+def cart_view(request):
+    cart_items = Cart.objects.all()
+    serializer = CartSerializer(cart_items, many=True)
+    return Response(serializer.data)

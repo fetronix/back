@@ -90,3 +90,11 @@ class Assets(models.Model):
 
     def __str__(self):
         return f"{self.asset_description} ({self.serial_number})"
+
+
+class Cart(models.Model):
+    asset = models.OneToOneField(Assets, on_delete=models.CASCADE)
+    added_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.asset.asset_description} added on {self.added_on}"

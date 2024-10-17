@@ -21,4 +21,7 @@ urlpatterns = [
     path('assets/<int:pk>/', AssetUpdateView.as_view(), name='asset-update'),  # Update asset by ID
     
     path('login/', LoginView.as_view(), name='login'),
+    
+    path('api/cart/', cart_view, name='cart_view'),
+    path('api/add-to-cart/<int:asset_id>/', add_to_cart, name='add_to_cart'),
 ]
