@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h2>Welcome to the Home Page</h2>
+    <p>If you see this page, you are logged in.</p>
+
+    <button id="logoutButton">Logout</button>
+
+    <script>
+        // Check if the user is logged in by verifying the presence of the JWT token
+        const accessToken = localStorage.getItem('access_token');
+
+        if (!accessToken) {
+            // If no token is present, redirect to the login page
+            window.location.href = 'login.html';
+        }
+
+        // Handle logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function () {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

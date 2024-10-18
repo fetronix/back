@@ -42,7 +42,7 @@ class Delivery(models.Model):
     supplier_name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
     date_delivered = models.DateField(auto_now_add=True)
-    person_receiving = models.CharField(max_length=255)
+    person_receiving = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True,help_text="User who received the asset")
     invoice_file = models.FileField(upload_to='invoices/')
     invoice_number = models.CharField(max_length=100)
     project = models.CharField(max_length=255)

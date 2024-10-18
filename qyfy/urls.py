@@ -1,10 +1,26 @@
-from django.urls import path
-from qyfy.views import LoginView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from qyfy.views import *
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet)
+router.register(r'locations', LocationViewSet)
+router.register(r'users', UserViewSet)
+
 
 urlpatterns = [
     # Your existing paths
     path('api/login/', LoginView.as_view(), name='login'),  # your existing login view if using token auth
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Obtain token
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh token
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+    
+    path('api/assets/', AssetsListView.as_view(), name='assets-list'),
+    path('assets/', AssetNewCreateView.as_view(), name='asset-create'),
+    path('assets/new/', AssetNewCreateView.as_view(), name='asset-create'),
+    path('assets/<int:pk>/', AssetsUpdateView.as_view(), name='asset-update'),
+    path('assets/<int:pk>/delete/', AssetsDeleteView.as_view(), name='asset-delete'),
+    
+    path('api/', include(router.urls)),
+    
+    path('deliveries/', DeliveryListCreateAPIView.as_view(), name='delivery-list-create'),
 ]
