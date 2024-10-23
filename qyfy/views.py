@@ -103,6 +103,20 @@ class UserViewSet(viewsets.ModelViewSet):
     
 
 
+# views.py
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Cart, Assets
+from .serializers import CartSerializer, CartDetailSerializer
+
+class CartListView(generics.ListAPIView):
+    serializer_class = CartSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Cart.objects.filter(user=user)
 
 class AddToCartView(APIView):
     def post(self, request, asset_id):

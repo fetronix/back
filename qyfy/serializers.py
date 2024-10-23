@@ -142,25 +142,23 @@ class DeliveryCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"invoice_number": "This field is required."})
         
         return attrs
-
 # serializers.py
 
 from rest_framework import serializers
 from .models import Cart, Assets
 
 class CartSerializer(serializers.ModelSerializer):
-    asset = serializers.StringRelatedField()
+    asset = serializers.StringRelatedField()  # You can use asset fields as needed
     user = serializers.StringRelatedField()
 
     class Meta:
         model = Cart
         fields = ['id', 'user', 'asset', 'added_at']
 
-
 class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assets
-        fields = ['new_location','status']
+        fields = ['status','new_location']
 
     def update(self, instance, validated_data):
         # Handle updating the new location and status
@@ -168,3 +166,10 @@ class AssetSerializer(serializers.ModelSerializer):
         instance.status = validated_data.get('status', instance.status)
         instance.save()
         return instance
+
+class CartDetailSerializer(serializers.ModelSerializer):
+    asset = serializers.StringRelatedField()  # Displaying asset as a string
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'asset', 'added_at']
