@@ -43,7 +43,7 @@ class Delivery(models.Model):
     quantity = models.PositiveIntegerField()
     date_delivered = models.DateField(auto_now_add=True)
     person_receiving = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True,help_text="User who received the asset")
-    invoice_file = models.FileField(upload_to='invoices/')
+    invoice_file = models.FileField(upload_to='invoices/', null=True, blank=True)
     invoice_number = models.CharField(max_length=100)
     project = models.CharField(max_length=255)
     comments = models.TextField(blank=True)
@@ -91,7 +91,7 @@ class Assets(models.Model):
     kenet_tag = models.CharField(max_length=100, unique=True)
     
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
-    new_location = models.ForeignKey(Location, on_delete=models.SET_NULL, related_name='new_location', blank=True, null=True)
+    new_location = models.CharField(max_length=100, null=True, blank=True)
 
     status = models.CharField(
         max_length=20,
@@ -111,17 +111,15 @@ class Assets(models.Model):
             verbose_name_plural = 'Assets'
             
             
-            
-from django.conf import settings
+# models.py
 
 class Cart(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     asset = models.ForeignKey(Assets, on_delete=models.CASCADE)
-    new_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)  # Link to the Location model
-    
+    added_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return f"{self.asset.asset_description}"
-    
+        return f"{self.user.username} - {self.asset.serial_number}"
+
     class Meta:
-            verbose_name = 'Cart'
-            verbose_name_plural = 'Cart'
+        unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once

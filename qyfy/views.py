@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *  # Assuming you've already created a LoginSerializer
+from django.shortcuts import get_object_or_404
 
 class LoginView(APIView):
     permission_classes = [AllowAny]  # Allow any user to access this view
@@ -46,7 +47,12 @@ class AssetsListView(generics.ListAPIView):
     queryset = Assets.objects.all()
     serializer_class = AssetsSerializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can access
-    
+   
+
+class DeliveryListView(generics.ListAPIView):
+    queryset = Delivery.objects.all()
+    serializer_class = DeliveryListSerializer
+    permission_classes = [IsAuthenticated]  
 
 class AssetsCreateView(generics.CreateAPIView):
     queryset = Assets.objects.all()
@@ -62,9 +68,19 @@ class AssetNewCreateView(APIView):
             return Response(AssetsSerializer(asset).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class DeliveryNewCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        serializer = DeliveryCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            asset = serializer.save()
+            return Response(DeliveryCreateSerializer(asset).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class AssetsUpdateView(generics.UpdateAPIView):
     queryset = Assets.objects.all()
-    serializer_class = AssetsSerializer
+    serializer_class = AssetSerializer
     permission_classes = [permissions.IsAuthenticated]  # Ensure authentication
 
 class AssetsDeleteView(generics.DestroyAPIView):
@@ -86,11 +102,39 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     
 
-class DeliveryListCreateAPIView(generics.ListCreateAPIView):
-    # permission_classes = [permissions.IsAuthenticated] 
-    def post(self, request, *args, **kwargs):
-        serializer = DeliveryCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            asset = serializer.save()
-            return Response(AssetsSerializer(asset).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddToCartView(APIView):
+    def post(self, request, asset_id):
+        user = request.user
+        asset = get_object_or_404(Assets, id=asset_id)
+
+        # Add to cart
+        cart_item, created = Cart.objects.get_or_create(user=user, asset=asset)
+
+        if created:
+            # Update asset status and location
+            asset.status = 'pending_release'  # You can customize the status as needed
+            asset.new_location = request.data.get('new_location')
+            asset.save()
+
+            return Response({'message': 'Added to cart'}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Item already in cart'}, status=status.HTTP_400_BAD_REQUEST)
+
+class RemoveFromCartView(APIView):
+    def delete(self, request, asset_id):
+        user = request.user
+        asset = get_object_or_404(Assets, id=asset_id)
+
+        # Remove from cart
+        cart_item = Cart.objects.filter(user=user, asset=asset).first()
+        if cart_item:
+            cart_item.delete()
+
+            # Update asset status and location back to default
+            asset.status = 'instore'
+            asset.new_location = None
+            asset.save()
+
+            return Response({'message': 'Removed from cart'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Item not in cart'}, status=status.HTTP_400_BAD_REQUEST)

@@ -42,6 +42,24 @@ class AssetsSerializer(serializers.ModelSerializer):
             'category'
         ]
    
+class DeliveryListSerializer(serializers.ModelSerializer):
+    
+    person_receiving = serializers.StringRelatedField()  # Use this if you have a __str__ method in the PersonReceiving model
+   
+    class Meta:
+        model = Delivery
+        fields = [
+             'id',
+            'person_receiving',
+            'date_delivered',
+            'supplier_name',
+            'quantity',
+            'invoice_file',
+            'invoice_number',  
+            'project',
+            'comments',
+        ]
+   
         
 
 
@@ -89,43 +107,34 @@ class AssetCreateSerializer(serializers.ModelSerializer):
         return attrs
     
 
-class DeliverySerializer(serializers.ModelSerializer):
-    person_receiving = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
-    class Meta:
-        model = Delivery
-        fields = ['id', 'supplier_name', 'quantity', 'person_receiving','invoice_file', 'invoice_number', 'project', 'comments']
-    
-    def create(self, validated_data):
-        person_receiving = validated_data.pop('person_receiving')
-        # Create the asset with the remaining validated data
-        asset = Assets.objects.create(
-            person_receiving=person_receiving,
-            **validated_data
-        )
-        return asset
-
-    def validate(self, attrs):
-        # Custom validation if necessary
-        if 'invoice_number' not in attrs or not attrs['invoice_number']:
-            raise serializers.ValidationError({"invoice_number": "This field is required."})
-        
-        return attrs
-        
 class DeliveryCreateSerializer(serializers.ModelSerializer):
     person_receiving = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+
     class Meta:
         model = Delivery
-        fields = ['id', 'supplier_name', 'quantity', 'person_receiving','invoice_file', 'invoice_number', 'project', 'comments']
-        
+        fields = [
+            'id',
+            'date_delivered',
+            'person_receiving',
+            'supplier_name',
+            'quantity',
+            'invoice_file',
+            'invoice_number', 
+            'project',
+            'comments',
+        ]
         
     def create(self, validated_data):
+
         person_receiving = validated_data.pop('person_receiving')
+
         # Create the asset with the remaining validated data
-        asset = Assets.objects.create(
+        assets = Delivery.objects.create(
+           
             person_receiving=person_receiving,
             **validated_data
         )
-        return asset
+        return assets
 
     def validate(self, attrs):
         # Custom validation if necessary
@@ -133,3 +142,29 @@ class DeliveryCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"invoice_number": "This field is required."})
         
         return attrs
+
+# serializers.py
+
+from rest_framework import serializers
+from .models import Cart, Assets
+
+class CartSerializer(serializers.ModelSerializer):
+    asset = serializers.StringRelatedField()
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'asset', 'added_at']
+
+
+class AssetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Assets
+        fields = ['new_location','status']
+
+    def update(self, instance, validated_data):
+        # Handle updating the new location and status
+        instance.new_location = validated_data.get('new_location', instance.new_location)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance
