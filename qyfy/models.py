@@ -104,7 +104,7 @@ class Assets(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.asset_description} ({self.serial_number})"
+        return f"{self.asset_description} ({self.serial_number})({self.kenet_tag})({self.location})({self.new_location})({self.status})({self.id})"
 
     class Meta:
             verbose_name = 'Asset'
@@ -119,7 +119,7 @@ class Cart(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.asset.serial_number}"
+        return f"{self.user.username} - {self.asset.serial_number}- {self.asset.status}- {self.asset.kenet_tag}- {self.asset.location}- {self.asset.new_location}- {self.asset.id}"
 
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
