@@ -189,7 +189,7 @@ def release_form(request):
         release_form_data.save()
 
         # Redirect to a success page (or render the same page with a success message)
-        return redirect('success')  # Define a success URL or page
+        return redirect('release_form_success')  # Define a success URL or page
 
     return render(request, 'qyfy/release_form.html')
 
@@ -199,3 +199,51 @@ from django.views.generic import TemplateView
 # Success view
 class ReleaseFormSuccessView(TemplateView):
     template_name = 'qyfy/success.html'
+    
+
+def render_pdf_view(request):
+    # Example context data. Replace or expand with actual data as needed.
+    context = {
+        'name': request.POST.get('name', 'John Doe'),
+        'date': timezone.now().date(),
+        'current_location': request.POST.get('current_location', 'Nairobi'),
+        'new_location': request.POST.get('new_location', 'Mombasa'),
+        'description': request.POST.get('description', 'Laptop'),
+        'quantity_required': request.POST.get('quantity_required', 1),
+        'quantity_issued': request.POST.get('quantity_issued', 1),
+        'serial_number': request.POST.get('serial_number', 'SN123456'),
+        'kenet_tag': request.POST.get('kenet_tag', 'KENET001'),
+        'authorizing_name': request.POST.get('authorizing_name', 'Jane Doe'),
+        'authorization_date': request.POST.get('authorization_date', timezone.now().date()),
+    }
+
+    # Render the HTML template with the context data
+    html_string = render_to_string('qyfy/release_form.html', context)
+    
+    # Create PDF from HTML
+    html = HTML(string=html_string)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="KENET_Release_Form.pdf"'
+    html.write_pdf(response)
+    
+    return response
+
+
+
+
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+
+# def render_pdf_view(request):
+#     context = {
+#         # Your context data here
+#     }
+
+#     html_string = render_to_string('qyfy/release_form.html', context)
+#     html = HTML(string=html_string)
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'attachment; filename="KENET_Release_Form.pdf"'
+#     html.write_pdf(response)
+    
+#     return response

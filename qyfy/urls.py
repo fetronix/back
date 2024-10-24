@@ -31,6 +31,8 @@ urlpatterns = [
     # Success page URL
     path('success/', ReleaseFormSuccessView.as_view(), name='release_form_success'),
     
+    path('download-pdf/', render_pdf_view, name='download_pdf'),
+    
     
 
 
