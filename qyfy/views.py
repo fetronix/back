@@ -192,3 +192,10 @@ def release_form(request):
         return redirect('success')  # Define a success URL or page
 
     return render(request, 'qyfy/release_form.html')
+
+
+from django.views.generic import TemplateView
+
+# Success view
+class ReleaseFormSuccessView(TemplateView):
+    template_name = 'qyfy/success.html'

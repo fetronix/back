@@ -28,6 +28,8 @@ urlpatterns = [
     path('cart/remove/<int:asset_id>/', RemoveFromCartView.as_view(), name='remove-from-cart'),
     path('cart/', CartListView.as_view(), name='cart-list'),  # New path to view cart items
     path('release-form/', release_form, name='release-form'),  
+    # Success page URL
+    path('success/', ReleaseFormSuccessView.as_view(), name='release_form_success'),
     
     
 
