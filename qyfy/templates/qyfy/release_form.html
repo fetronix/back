@@ -67,6 +67,15 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
+        .clear-button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -118,7 +127,8 @@
                         </div>
                     </td>
                     <td>
-                        <canvas class="signature" id="signature-pad"></canvas>
+                        <canvas class="signature" id="signature-pad" width="400" height="100"></canvas>
+                        <button type="button" class="clear-button" id="clear-signature">Clear</button>
                     </td>
                 </tr>
             </tbody>
@@ -174,7 +184,8 @@
                         <input type="text" name="authorizing_name" placeholder="Enter Name" required>
                     </td>
                     <td>
-                        <canvas class="signature" id="signature-pad-2"></canvas>
+                        <canvas class="signature" id="signature-pad-2" width="400" height="100"></canvas>
+                        <button type="button" class="clear-button" id="clear-signature-2">Clear</button>
                     </td>
                     <td>
                         <input type="date" name="authorization_date" required>
@@ -190,8 +201,58 @@
     </form>
 
     <div class="footer">
-        <p>&copy; 2024 KENET. All rights reserved.</p>
+        <p>&copy; 2024 KENET</p>
     </div>
 </div>
+
+<script>
+    // Signature pad logic
+    const signaturePad = document.getElementById('signature-pad');
+    const signaturePad2 = document.getElementById('signature-pad-2');
+    let isDrawing = false;
+
+    function startDrawing(event) {
+        isDrawing = true;
+        draw(event);
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        signaturePad.getContext('2d').beginPath();
+    }
+
+    function draw(event) {
+        if (!isDrawing) return;
+
+        const rect = signaturePad.getBoundingClientRect();
+        const ctx = signaturePad.getContext('2d');
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#000';
+
+        ctx.lineTo(event.clientX - rect.left, event.clientY - rect.top);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(event.clientX - rect.left, event.clientY - rect.top);
+    }
+
+    function clearSignature(pad) {
+        const ctx = pad.getContext('2d');
+        ctx.clearRect(0, 0, pad.width, pad.height);
+        ctx.beginPath(); // Reset the path
+    }
+
+    signaturePad.addEventListener('mousedown', startDrawing);
+    signaturePad.addEventListener('mouseup', stopDrawing);
+    signaturePad.addEventListener('mousemove', draw);
+    signaturePad.addEventListener('mouseleave', stopDrawing);
+    document.getElementById('clear-signature').addEventListener('click', () => clearSignature(signaturePad));
+
+    signaturePad2.addEventListener('mousedown', startDrawing);
+    signaturePad2.addEventListener('mouseup', stopDrawing);
+    signaturePad2.addEventListener('mousemove', draw);
+    signaturePad2.addEventListener('mouseleave', stopDrawing);
+    document.getElementById('clear-signature-2').addEventListener('click', () => clearSignature(signaturePad2));
+</script>
 </body>
 </html>
