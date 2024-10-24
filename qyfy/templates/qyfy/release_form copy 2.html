@@ -13,8 +13,11 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: #f4f4f4;
+            width: 210mm; /* A4 Width */
+            height: auto; /* Allow dynamic height */
+            overflow: auto; /* Allow scrolling */
         }
         .container {
             max-width: 800px;
@@ -58,14 +61,23 @@
         }
         .table, .table th, .table td {
             border: 1px solid black;
+            word-wrap: break-word; /* Allow long words to break to the next line */
         }
         .table th, .table td {
             padding: 10px;
             text-align: left;
+            overflow: hidden; /* Prevent overflow in cells */
         }
         .instructions {
             margin-bottom: 20px;
             font-weight: bold;
+        }
+        @media print {
+            body {
+                width: auto; /* Reset for printing */
+                height: auto; /* Reset for printing */
+                overflow: visible; /* Allow overflow for printing */
+            }
         }
     </style>
 </head>
@@ -73,7 +85,7 @@
 <div class="container" id="pdf-content">
     <div class="header">
         <h1>KENET Release Form</h1>
-        <img src="https://www.flaticon.com/free-icon/facebook_733547?term=facebook&page=1&position=3&origin=tag&related_id=733547" alt="KENET Logo" style="display: block; margin: 0 auto; width: 200px;" >
+        <img src="https://img.icons8.com/?size=100&id=112173&format=png&color=000000" alt="KENET Logo" style="display: block; margin: 0 auto; width: 200px;" >
         <p>KENET SECRETARIAT</p>
         <p>P.O BOX 30244 00100, NAIROBI.</p>
         <p>Email: info@kenet.or.ke | Tel: 0732 150000 / 0703 044500</p>
@@ -87,7 +99,8 @@
 
     <form method="POST" action="{% url 'download_pdf' %}">
         {% csrf_token %}
-        <table class="table">
+        <div style="overflow-x: auto; width: 100%;">
+            <table class="table" style="width: 100%; table-layout: fixed; border-collapse: collapse;">
             <thead>
                 <tr>
                     <th>1<br>Name & Date:</th>
@@ -123,6 +136,7 @@
                 </tr>
             </tbody>
         </table>
+    </div>
 
         <h2>Property Description</h2>
         <div style="overflow-x: auto; width: 100%;">
@@ -160,7 +174,8 @@
         
 
         <h2>Authorizing Signature</h2>
-        <table class="table">
+        <div style="overflow-x: auto; width: 100%;">
+            <table class="table" style="width: 100%; table-layout: fixed; border-collapse: collapse;">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -182,16 +197,13 @@
                 </tr>
             </tbody>
         </table>
+    </div>
         <p style="text-align: center; font-weight: bold;">Version 1.0.0 &nbsp; Reference: KS/ERF</p>
 
-        <img src="https://example.com/path/to/your/kenet_stamp.png" alt="KENET Stamp" style="display: block; margin: 0 auto; width: 200px;">
+        <img src="https://img.icons8.com/?size=100&id=JvJuldtsTkYT&format=png&color=000000" alt="KENET Stamp" style="display: block; margin: 0 auto; width: 200px;">
 
-        <button type="submit" style="display: block; margin: 20px auto; padding: 10px 20px; border: 2px solid #7005A1FF; background-color: transparent; color: #7005A1FF; border-radius: 25px; cursor: pointer;">Download Data</button>
+        <button type="submit" style="display: block; margin: 20px auto; padding: 10px 20px; font-size: 16px;">Download PDF</button>
     </form>
-
-    <div class="footer">
-        <p>&copy; 2024 KENET. All rights reserved.</p>
-    </div>
 </div>
 </body>
 </html>
