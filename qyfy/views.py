@@ -191,4 +191,4 @@ def release_form(request):
         # Redirect to a success page (or render the same page with a success message)
         return redirect('success')  # Define a success URL or page
 
-    return render(request, 'release_form.html')
+    return render(request, 'qyfy/release_form.html')
