@@ -197,45 +197,21 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+
+
 <script>
-    const signaturePad = document.getElementById('signature-pad');
-    const ctx = signaturePad.getContext('2d');
-    let isDrawing = false;
-
-    signaturePad.addEventListener('mousedown', (e) => {
-        isDrawing = true;
-        ctx.moveTo(e.offsetX, e.offsetY);
-    });
-
-    signaturePad.addEventListener('mousemove', (e) => {
-        if (isDrawing) {
-            ctx.lineTo(e.offsetX, e.offsetY);
-            ctx.stroke();
-        }
-    });
-
-    signaturePad.addEventListener('mouseup', () => {
-        isDrawing = false;
-        ctx.beginPath();
-    });
-
-    // Function to download PDF
     document.getElementById('download-pdf').addEventListener('click', () => {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+        const pdfContent = document.getElementById('pdf-content');
 
-        // Get the content of the container
-        const content = document.getElementById('pdf-content');
-
-        // Convert HTML to PDF
-        doc.html(content, {
-            callback: function (doc) {
-                doc.save('KENET_Release_Form.pdf');
-            },
-            x: 10,
-            y: 10,
-            width: 190, // Optional
-            windowWidth: 650 // Optional
+        // Use html2canvas to capture the content
+        html2canvas(pdfContent).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.addImage(imgData, 'PNG', 10, 10);
+            doc.save('KENET_Release_Form.pdf');
         });
     });
 </script>
