@@ -20,9 +20,11 @@ admin.site.register(Category)
 admin.site.register(Location)
 admin.site.register(Delivery)
 admin.site.register(Cart)
-
-
-# admin.py
+@admin.register(ReleaseFormData)
+class ReleaseFormDataAdmin(admin.ModelAdmin):
+    list_display = ('name', 'date', 'current_location', 'new_location', 'description', 'quantity_required', 'quantity_issued', 'created_at')
+    list_filter = ('date', 'authorization_date', 'created_at')
+    search_fields = ('name', 'serial_number', 'kenet_tag', 'authorizing_name')
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin

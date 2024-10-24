@@ -123,3 +123,24 @@ class Cart(models.Model):
 
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
+
+
+class ReleaseFormData(models.Model):
+    # Fields from the form
+    name = models.CharField(max_length=255)
+    date = models.DateField()
+    current_location = models.CharField(max_length=255)
+    new_location = models.CharField(max_length=255)
+    description = models.TextField()
+    quantity_required = models.PositiveIntegerField()
+    quantity_issued = models.PositiveIntegerField()
+    serial_number = models.CharField(max_length=100)
+    kenet_tag = models.CharField(max_length=100)
+    authorizing_name = models.CharField(max_length=255)
+    authorization_date = models.DateField()
+
+    # Optional: Add timestamp for when the form was submitted
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.date}"

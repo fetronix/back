@@ -152,3 +152,43 @@ class RemoveFromCartView(APIView):
         else:
             return Response({'message': 'Item not in Dispatch basket'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .models import ReleaseFormData  # Assuming you have a model to save form data
+
+def release_form(request):
+    if request.method == "POST":
+        # Extract data from the form
+        name = request.POST.get('name')
+        date = request.POST.get('date')
+        current_location = request.POST.get('current_location')
+        new_location = request.POST.get('new_location')
+        description = request.POST.get('description')
+        quantity_required = request.POST.get('quantity_required')
+        quantity_issued = request.POST.get('quantity_issued')
+        serial_number = request.POST.get('serial_number')
+        kenet_tag = request.POST.get('kenet_tag')
+        authorizing_name = request.POST.get('authorizing_name')
+        authorization_date = request.POST.get('authorization_date')
+
+        # Save the data to the database (you should define the ReleaseFormData model accordingly)
+        release_form_data = ReleaseFormData(
+            name=name,
+            date=date,
+            current_location=current_location,
+            new_location=new_location,
+            description=description,
+            quantity_required=quantity_required,
+            quantity_issued=quantity_issued,
+            serial_number=serial_number,
+            kenet_tag=kenet_tag,
+            authorizing_name=authorizing_name,
+            authorization_date=authorization_date,
+        )
+        release_form_data.save()
+
+        # Redirect to a success page (or render the same page with a success message)
+        return redirect('success')  # Define a success URL or page
+
+    return render(request, 'release_form.html')
