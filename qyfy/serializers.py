@@ -39,6 +39,7 @@ class AssetsSerializer(serializers.ModelSerializer):
             'date_received', 
             'person_receiving', 
             'asset_description', 
+            'new_location',
             'serial_number', 
             'kenet_tag', 
             'location',
@@ -170,11 +171,11 @@ class CartSerializer(serializers.ModelSerializer):
 class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assets
-        fields = ['status']
+        fields = ['status','new_location']
 
     def update(self, instance, validated_data):
         # Handle updating the new location and status
-        # instance.new_location = validated_data.get('new_location', instance.new_location)
+        instance.new_location = validated_data.get('new_location', instance.new_location)
         instance.status = validated_data.get('status', instance.status)
         instance.save()
         return instance

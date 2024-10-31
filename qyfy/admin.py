@@ -3,7 +3,7 @@ from .models import *
 
 class AssetsAdmin(admin.ModelAdmin):
     # Fields to display in the list view
-    list_display = ('asset_description','category','person_receiving', 'serial_number', 'kenet_tag', 'location', 'status', 'date_received')
+    list_display = ('asset_description','category','person_receiving', 'serial_number', 'kenet_tag', 'location','new_location', 'status', 'date_received')
     
     # Fields to search for in the admin interface
     search_fields = ('serial_number', 'kenet_tag', 'asset_description', 'location')

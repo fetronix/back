@@ -115,7 +115,7 @@ class Assets(models.Model):
     asset_description_model = models.CharField(max_length=100, null=True, blank=True)
     serial_number = models.CharField(max_length=100, unique=True)
     kenet_tag = models.CharField(max_length=100, unique=True)
-    
+    new_location = models.CharField(max_length=100, blank=True,null=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
     
     
@@ -131,7 +131,7 @@ class Assets(models.Model):
     delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True, blank=True, related_name='assets', help_text="Associated delivery for this asset")
 
     def __str__(self):
-        return f"{self.asset_description} ({self.asset_description_model})({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.status}) ({self.id})"
+        return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id})"
 
     class Meta:
         verbose_name = 'Asset'
