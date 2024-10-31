@@ -19,6 +19,12 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 
+
+admin.site.site_header = 'KENET Assets'                    # default: "Django Administration"
+admin.site.index_title = 'Assets Management Area '                 # default: "Site administration"
+admin.site.site_title = 'KENET Assets admin panel' # default: "Django site admin"
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('app/', include('qyfy.urls')),
