@@ -200,14 +200,14 @@ def release_form(request):
         # Redirect to a success page (or render the same page with a success message)
         return redirect('release_form_success')  # Define a success URL or page
 
-    return render(request, 'qyfy/release_form.html')
+    return render(request, 'KENETAssets/release_form.html')
 
 
 from django.views.generic import TemplateView
 
 # Success view
 class ReleaseFormSuccessView(TemplateView):
-    template_name = 'qyfy/success.html'
+    template_name = 'KENETAssets/success.html'
     
 
 def render_pdf_view(request):
@@ -227,7 +227,7 @@ def render_pdf_view(request):
     }
 
     # Render the HTML template with the context data
-    html_string = render_to_string('qyfy/release_form.html', context)
+    html_string = render_to_string('KENETAssets/release_form.html', context)
     
     # Create PDF from HTML
     html = HTML(string=html_string)
