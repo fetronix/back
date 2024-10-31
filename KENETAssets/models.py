@@ -150,30 +150,6 @@ class Cart(models.Model):
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
 
-class CheckoutStatus(models.TextChoices):
-    PENDING = 'pending', 'Pending'
-    CHECKED_OUT = 'checked_out', 'Checked Out'
-    RETURNED = 'returned', 'Returned'
-
-
-
-class Checkout(models.Model):
-    cart_item = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="checkout")
-    checkout_date = models.DateTimeField(auto_now_add=True)
-    expected_return_date = models.DateTimeField(null=True, blank=True)
-    actual_return_date = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(
-        max_length=20,
-        choices=CheckoutStatus.choices,
-        default=CheckoutStatus.PENDING,
-    )
-    comments = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.cart_item.user.username} - {self.cart_item.asset.serial_number} - {self.status}"
-
-
-
 
 class ReleaseFormData(models.Model):
     # Fields from the form

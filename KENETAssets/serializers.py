@@ -188,17 +188,3 @@ class CartDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'asset', 'added_at']
 
 
-class CheckoutSerializer(serializers.ModelSerializer):
-    cart_item = CartSerializer(read_only=True)
-
-    class Meta:
-        model = Checkout
-        fields = [
-            'id',
-            'cart_item',
-            'checkout_date',
-            'expected_return_date',
-            'actual_return_date',
-            'status',
-            'comments',
-        ]

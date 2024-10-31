@@ -35,10 +35,7 @@ urlpatterns = [
     
     path('download-pdf/', render_pdf_view, name='download_pdf'),
     
-    path('cart/checkout/', CartCheckoutView.as_view(), name='cart-checkout'),
     
-    
-
 
     
 ]

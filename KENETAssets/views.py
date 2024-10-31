@@ -165,6 +165,9 @@ class RemoveFromCartView(APIView):
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import ReleaseFormData  # Assuming you have a model to save form data
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
 
 def release_form(request):
     if request.method == "POST":
@@ -238,49 +241,3 @@ def render_pdf_view(request):
     return response
 
 
-
-
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from weasyprint import HTML
-
-# def render_pdf_view(request):
-#     context = {
-#         # Your context data here
-#     }
-
-#     html_string = render_to_string('qyfy/release_form.html', context)
-#     html = HTML(string=html_string)
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'attachment; filename="KENET_Release_Form.pdf"'
-#     html.write_pdf(response)
-    
-#     return response
-
-
-
-class CartCheckoutView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = CheckoutSerializer
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        cart_items = Cart.objects.filter(user=user)
-
-        if not cart_items.exists():
-            return Response({"detail": "Cart is empty."}, status=status.HTTP_400_BAD_REQUEST)
-
-        checkouts = []
-        for cart_item in cart_items:
-            checkout = Checkout.objects.create(
-                cart_item=cart_item,
-                status=CheckoutStatus.PENDING
-            )
-            checkouts.append(checkout)
-
-        # Clear the user's cart
-        cart_items.delete()
-
-        # Serialize and return the new checkout items
-        serializer = self.get_serializer(checkouts, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
