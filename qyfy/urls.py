@@ -5,6 +5,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet)
 router.register(r'locations', LocationViewSet)
+router.register(r'suppliers', SupplierViewSet)
+router.register(r'mydeliveries', DeliveryViewSet)
 router.register(r'users', UserViewSet)
 
 
@@ -32,6 +34,8 @@ urlpatterns = [
     path('success/', ReleaseFormSuccessView.as_view(), name='release_form_success'),
     
     path('download-pdf/', render_pdf_view, name='download_pdf'),
+    
+    path('cart/checkout/', CartCheckoutView.as_view(), name='cart-checkout'),
     
     
 

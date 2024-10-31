@@ -16,6 +16,11 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = '__all__'  # You can specify specific fields if needed
 
+class SupplierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Suppliers
+        fields = '__all__'  # You can specify specific fields if needed
+
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,8 +41,7 @@ class AssetsSerializer(serializers.ModelSerializer):
             'asset_description', 
             'serial_number', 
             'kenet_tag', 
-            'location', 
-            'new_location', 
+            'location',
             'status', 
             'category'
         ]
@@ -45,7 +49,7 @@ class AssetsSerializer(serializers.ModelSerializer):
 class DeliveryListSerializer(serializers.ModelSerializer):
     
     person_receiving = serializers.StringRelatedField()  # Use this if you have a __str__ method in the PersonReceiving model
-   
+    supplier_name = serializers.StringRelatedField()
     class Meta:
         model = Delivery
         fields = [
@@ -58,6 +62,7 @@ class DeliveryListSerializer(serializers.ModelSerializer):
             'invoice_number',  
             'project',
             'comments',
+            'delivery_id',
         ]
    
         
@@ -67,6 +72,7 @@ class AssetCreateSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all()) # Serialize category details
     location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
     person_receiving = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    delivery = serializers.PrimaryKeyRelatedField(queryset=Delivery.objects.all())
 
     # We will auto-fill 'person_receiving' in the view, so no need for the queryset here
     # person_receiving = serializers.CharField(read_only=True)
@@ -78,23 +84,27 @@ class AssetCreateSerializer(serializers.ModelSerializer):
             'date_received',
             'person_receiving',
             'asset_description',
+            'asset_description_model',
             'serial_number',
             'kenet_tag',
             'location',  # Primary location
             'status',
             'category',
+            'delivery',
         ]
         
     def create(self, validated_data):
         category_data = validated_data.pop('category')
         location = validated_data.pop('location')
         person_receiving = validated_data.pop('person_receiving')
+        delivery = validated_data.pop('delivery')
 
         # Create the asset with the remaining validated data
         asset = Assets.objects.create(
             category=category_data,
             location=location,
             person_receiving=person_receiving,
+            delivery=delivery,
             **validated_data
         )
         return asset
@@ -109,7 +119,7 @@ class AssetCreateSerializer(serializers.ModelSerializer):
 
 class DeliveryCreateSerializer(serializers.ModelSerializer):
     person_receiving = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
-
+    supplier_name = serializers.PrimaryKeyRelatedField(queryset=Suppliers.objects.all())
     class Meta:
         model = Delivery
         fields = [
@@ -127,11 +137,13 @@ class DeliveryCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         person_receiving = validated_data.pop('person_receiving')
+        supplier_name = validated_data.pop('supplier_name')
 
         # Create the asset with the remaining validated data
         assets = Delivery.objects.create(
            
             person_receiving=person_receiving,
+            supplier_name=supplier_name,
             **validated_data
         )
         return assets
@@ -158,11 +170,11 @@ class CartSerializer(serializers.ModelSerializer):
 class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assets
-        fields = ['status','new_location']
+        fields = ['status']
 
     def update(self, instance, validated_data):
         # Handle updating the new location and status
-        instance.new_location = validated_data.get('new_location', instance.new_location)
+        # instance.new_location = validated_data.get('new_location', instance.new_location)
         instance.status = validated_data.get('status', instance.status)
         instance.save()
         return instance
@@ -173,3 +185,19 @@ class CartDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['id', 'user', 'asset', 'added_at']
+
+
+class CheckoutSerializer(serializers.ModelSerializer):
+    cart_item = CartSerializer(read_only=True)
+
+    class Meta:
+        model = Checkout
+        fields = [
+            'id',
+            'cart_item',
+            'checkout_date',
+            'expected_return_date',
+            'actual_return_date',
+            'status',
+            'comments',
+        ]

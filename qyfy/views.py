@@ -98,6 +98,15 @@ class LocationViewSet(viewsets.ModelViewSet):
     serializer_class = LocationSerializer # Ensure only authenticated users 
     
 
+class DeliveryViewSet(viewsets.ModelViewSet):
+    queryset = Delivery.objects.all()
+    serializer_class = DeliveryListSerializer # Ensure only authenticated users 
+    
+    
+class SupplierViewSet(viewsets.ModelViewSet):
+    queryset = Suppliers.objects.all()
+    serializer_class = SupplierSerializer # Ensure only authenticated users 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
@@ -247,3 +256,31 @@ from weasyprint import HTML
 #     html.write_pdf(response)
     
 #     return response
+
+
+
+class CartCheckoutView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CheckoutSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        cart_items = Cart.objects.filter(user=user)
+
+        if not cart_items.exists():
+            return Response({"detail": "Cart is empty."}, status=status.HTTP_400_BAD_REQUEST)
+
+        checkouts = []
+        for cart_item in cart_items:
+            checkout = Checkout.objects.create(
+                cart_item=cart_item,
+                status=CheckoutStatus.PENDING
+            )
+            checkouts.append(checkout)
+
+        # Clear the user's cart
+        cart_items.delete()
+
+        # Serialize and return the new checkout items
+        serializer = self.get_serializer(checkouts, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

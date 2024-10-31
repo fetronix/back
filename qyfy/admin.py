@@ -3,7 +3,7 @@ from .models import *
 
 class AssetsAdmin(admin.ModelAdmin):
     # Fields to display in the list view
-    list_display = ('asset_description','category','person_receiving', 'serial_number', 'kenet_tag', 'location', 'status', 'date_received','new_location')
+    list_display = ('asset_description','category','person_receiving', 'serial_number', 'kenet_tag', 'location', 'status', 'date_received')
     
     # Fields to search for in the admin interface
     search_fields = ('serial_number', 'kenet_tag', 'asset_description', 'location')
@@ -20,6 +20,8 @@ admin.site.register(Category)
 admin.site.register(Location)
 admin.site.register(Delivery)
 admin.site.register(Cart)
+admin.site.register(AssetMovement)
+admin.site.register(Suppliers)
 @admin.register(ReleaseFormData)
 class ReleaseFormDataAdmin(admin.ModelAdmin):
     list_display = ('name', 'date', 'current_location', 'new_location', 'description', 'quantity_required', 'quantity_issued', 'created_at')
