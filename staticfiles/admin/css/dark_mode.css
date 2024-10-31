@@ -1,6 +1,6 @@
 @media (prefers-color-scheme: dark) {
     :root {
-      --primary: #264b5d;
+      --primary: #653D82;
       --primary-fg: #f7f7f7;
   
       --body-fg: #eeeeee;
@@ -12,8 +12,8 @@
       --breadcrumbs-link-fg: #e0e0e0;
       --breadcrumbs-bg: var(--primary);
   
-      --link-fg: #81d4fa;
-      --link-hover-color: #4ac1f7;
+      --link-fg: #653D82;
+      --link-hover-color: #653D82;
       --link-selected-fg: #6f94c6;
   
       --hairline-color: #272727;
@@ -49,8 +49,8 @@ html[data-theme="dark"] {
     --breadcrumbs-link-fg: #e0e0e0;
     --breadcrumbs-bg: var(--primary);
 
-    --link-fg: #81d4fa;
-    --link-hover-color: #4ac1f7;
+    --link-fg: #653D82;
+    --link-hover-color: #653D82;
     --link-selected-fg: #6f94c6;
 
     --hairline-color: #272727;
