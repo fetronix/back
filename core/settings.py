@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework', 
     'corsheaders',
     
-    'qyfy'
+    'KENETAssets'
 
 ]
 
@@ -145,7 +145,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # settings.py
-AUTH_USER_MODEL = 'qyfy.CustomUser'  # Replace 'yourapp' with your actual app name
+AUTH_USER_MODEL = 'KENETAssets.CustomUser'  # Replace 'yourapp' with your actual app name
 
 
 CORS_ALLOW_ALL_ORIGINS = True
