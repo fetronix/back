@@ -123,6 +123,7 @@ from .serializers import CartSerializer, CartDetailSerializer
 
 class CartListView(generics.ListAPIView):
     serializer_class = CartSerializer
+    
 
     def get_queryset(self):
         user = self.request.user
@@ -241,3 +242,47 @@ def render_pdf_view(request):
     return response
 
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .models import Cart, Checkout, Assets
+from .serializers import CheckoutSerializer  # Import the new serializer
+
+class CheckoutCreateView(APIView):
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access this view
+
+    def post(self, request, *args, **kwargs):
+        user = request.user  # Get the currently logged-in user
+        cart_items = Cart.objects.filter(user=user)
+
+        if not cart_items.exists():
+            return Response({"detail": "Your cart is empty."}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_location = request.data.get('new_location')  # Get the new location from request data
+        if not new_location:
+            return Response({"detail": "New location is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new Checkout for the current user
+        checkout = Checkout.objects.create(user=user)
+        checkout.cart_items.set(cart_items)
+        checkout.save()
+
+        # Update the status and location of the assets in the cart
+        for cart_item in cart_items:
+            asset = cart_item.asset  # Get the asset linked to the cart item
+            asset.status = 'pending_approval'  # Update to desired status
+            asset.new_location = new_location  # Set the new location for the asset
+            asset.save()  # Save the updated asset
+
+        serializer = CheckoutSerializer(checkout)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CheckoutListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated] 
+    queryset = Checkout.objects.all()
+    serializer_class = CheckoutSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)  # Show only the user's checkouts

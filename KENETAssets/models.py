@@ -107,6 +107,8 @@ class Assets(models.Model):
         ('faulty', 'Faulty'),
         ('onsite', 'On Site'),
         ('pending_release', 'Pending Release'),
+        ('pending_approval', 'Pending Approval '),
+        ('approved', 'Approved by Admin '),
     ]
 
     date_received = models.DateField(auto_now_add=True)
@@ -131,7 +133,7 @@ class Assets(models.Model):
     delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True, blank=True, related_name='assets', help_text="Associated delivery for this asset")
 
     def __str__(self):
-        return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id})"
+        return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id})({self.new_location})"
 
     class Meta:
         verbose_name = 'Asset'
@@ -145,10 +147,25 @@ class Cart(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.asset.serial_number}- {self.asset.status}- {self.asset.kenet_tag}- {self.asset.location}- {self.asset.id}"
+        return f"{self.user.username} - {self.asset.serial_number}- {self.asset.status}- {self.asset.kenet_tag}- {self.asset.location}- {self.asset.id}- {self.asset.new_location}"
 
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
+
+
+from django.db import models
+from django.conf import settings
+
+class Checkout(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # items = models.ManyToManyField('Cart')  # Link to Cart items
+    cart_items = models.ManyToManyField(Cart, related_name='checkouts')
+    checkout_date = models.DateTimeField(auto_now_add=True)
+    remarks = models.TextField(blank=True, null=True)  # Optional remarks field
+
+    def __str__(self):
+        return f"Checkout by {self.user.username} on {self.checkout_date}"
+
 
 
 class ReleaseFormData(models.Model):
@@ -187,3 +204,23 @@ class AssetMovement(models.Model):
         verbose_name = 'Asset Movement'
         verbose_name_plural = 'Asset Movements'
         ordering = ['-movement_date']  # Orders by most recent movements first
+        
+
+from django.db import models
+from django.conf import settings
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    checkout = models.ForeignKey(Checkout, on_delete=models.CASCADE, related_name="order")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Order {self.id} for {self.user.username}"

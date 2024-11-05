@@ -20,8 +20,12 @@ admin.site.register(Category)
 admin.site.register(Location)
 admin.site.register(Delivery)
 admin.site.register(Cart)
+admin.site.register(Checkout)
 admin.site.register(AssetMovement)
 admin.site.register(Suppliers)
+
+
+
 @admin.register(ReleaseFormData)
 class ReleaseFormDataAdmin(admin.ModelAdmin):
     list_display = ('name', 'date', 'current_location', 'new_location', 'description', 'quantity_required', 'quantity_issued', 'created_at')

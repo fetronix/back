@@ -188,3 +188,15 @@ class CartDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'asset', 'added_at']
 
 
+
+
+from rest_framework import serializers
+from .models import Checkout, Cart
+from .serializers import CartSerializer
+
+class CheckoutSerializer(serializers.ModelSerializer):
+    cart_items = CartSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Checkout
+        fields = ['id', 'user', 'cart_items', 'checkout_date', 'remarks']

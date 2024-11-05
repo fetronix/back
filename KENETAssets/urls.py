@@ -36,6 +36,7 @@ urlpatterns = [
     path('download-pdf/', render_pdf_view, name='download_pdf'),
     
     
-
+    path('checkout/', CheckoutCreateView.as_view(), name='checkout-create'),
+    path('checkouts/', CheckoutListView.as_view(), name='checkout-list'),
     
 ]
