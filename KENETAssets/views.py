@@ -250,16 +250,17 @@ from .models import Cart, Checkout, Assets
 from .serializers import CheckoutSerializer  # Import the new serializer
 
 class CheckoutCreateView(APIView):
-    permission_classes = [IsAuthenticated]  # Only authenticated users can access this view
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        user = request.user  # Get the currently logged-in user
-        cart_items = Cart.objects.filter(user=user)
+        user = request.user
+        # Filter cart items based on the status 'pending_release'
+        cart_items = Cart.objects.filter(user=user, asset__status='pending_release')
 
         if not cart_items.exists():
-            return Response({"detail": "Your cart is empty."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "No items with status 'pending_release' in your cart."}, status=status.HTTP_400_BAD_REQUEST)
 
-        new_location = request.data.get('new_location')  # Get the new location from request data
+        new_location = request.data.get('new_location')
         if not new_location:
             return Response({"detail": "New location is required."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -270,13 +271,14 @@ class CheckoutCreateView(APIView):
 
         # Update the status and location of the assets in the cart
         for cart_item in cart_items:
-            asset = cart_item.asset  # Get the asset linked to the cart item
-            asset.status = 'pending_approval'  # Update to desired status
-            asset.new_location = new_location  # Set the new location for the asset
-            asset.save()  # Save the updated asset
+            asset = cart_item.asset
+            asset.status = 'pending_approval'  # Update the status
+            asset.new_location = new_location  # Set the new location
+            asset.save()
 
         serializer = CheckoutSerializer(checkout)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 class CheckoutListView(generics.ListAPIView):
@@ -286,3 +288,93 @@ class CheckoutListView(generics.ListAPIView):
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)  # Show only the user's checkouts
+
+
+class CheckoutAdminListView(generics.ListAPIView):
+    # permission_classes = [IsAuthenticated] 
+    queryset = Checkout.objects.all()
+    serializer_class = CheckoutSerializer
+
+
+# views.py
+
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from .models import Checkout, Assets, Cart
+from .serializers import CheckoutSerializer
+
+class ApproveCheckoutView(APIView):
+    permission_classes = [IsAdminUser]  # Only admins can approve checkouts
+
+    def post(self, request, checkout_id, *args, **kwargs):
+        try:
+            checkout = Checkout.objects.get(id=checkout_id)
+            cart_items = checkout.cart_items.all()
+
+            # List to keep track of assets that couldn't be approved
+            failed_assets = []
+
+            for cart_item in cart_items:
+                asset = cart_item.asset
+                if asset.status == 'approved':
+                    # If the asset is already approved, add to the failed_assets list
+                    failed_assets.append(f"Asset {asset.serial_number} is already approved.")
+                elif asset.status == 'pending_approval':
+                    # Approve the asset if it's pending approval
+                    asset.status = 'approved'
+                    asset.save()
+                else:
+                    # If asset status is not "pending_approval", you can either skip or handle it differently
+                    failed_assets.append(f"Asset {asset.serial_number} cannot be approved due to its current status: {asset.status}.")
+
+            # If there are no failed assets, return success
+            if not failed_assets:
+                return Response(
+                    {"detail": "All assets in the checkout have been approved."},
+                    status=status.HTTP_200_OK
+                )
+
+            # If there are failed assets, return a message with all the failed ones
+            return Response(
+                {"detail": "Some assets could not be approved.", "failed_assets": failed_assets},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        except Checkout.DoesNotExist:
+            return Response({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+from rest_framework import status
+from rest_framework.generics import CreateAPIView
+from rest_framework.response import Response
+from .models import ReleaseFormData
+from .serializers import ReleaseFormDataSerializer
+
+class ReleaseAssetView(CreateAPIView):
+    queryset = ReleaseAdminFormData.objects.all()
+    serializer_class = ReleaseFormDataSerializer
+
+    def perform_create(self, serializer):
+        # If you need to modify the data before saving, you can do it here
+        # For example, you can set the user or any other data manually if needed
+        serializer.save()
+
+
+class ReleaseAdminListView(generics.ListAPIView):
+    # permission_classes = [IsAuthenticated] 
+    queryset = ReleaseAdminFormData.objects.all()
+    serializer_class = ReleaseFormDataSerializer
+    
+
+class CheckoutUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Checkout.objects.all()
+    serializer_class = CheckoutUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    # def get_queryset(self):
+    #     # Ensure the user can only update their own checkouts
+    #     return Checkout.objects.filter(user=self.request.user)
+    
+    

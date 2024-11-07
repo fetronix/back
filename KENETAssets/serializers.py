@@ -200,3 +200,38 @@ class CheckoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checkout
         fields = ['id', 'user', 'cart_items', 'checkout_date', 'remarks']
+
+
+
+class CheckoutUpdateSerializer(serializers.ModelSerializer):
+    # Field to accept base64 signature data for updating the signature image
+    signature_image = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = Checkout
+        fields = ['remarks', 'signature_image', 'quantity_required', 'quantity_issued', 'authorizing_name']
+        extra_kwargs = {
+            'quantity_required': {'required': False},
+            'quantity_issued': {'required': False},
+            'remarks': {'required': False},
+            'authorizing_name': {'required': False},
+        }
+
+    def update(self, instance, validated_data):
+        # Update remarks
+        instance.remarks = validated_data.get('remarks', instance.remarks)
+
+        # Update signature image if signature_base64 is provided
+        signature_image = validated_data.get('signature_image')
+        if signature_image:
+            instance.save_signature(signature_image)
+
+        # Update quantity fields
+        instance.quantity_required = validated_data.get('quantity_required', instance.quantity_required)
+        instance.quantity_issued = validated_data.get('quantity_issued', instance.quantity_issued)
+
+        # Update authorizing name
+        instance.authorizing_name = validated_data.get('authorizing_name', instance.authorizing_name)
+
+        instance.save()
+        return instance

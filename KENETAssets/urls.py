@@ -38,5 +38,12 @@ urlpatterns = [
     
     path('checkout/', CheckoutCreateView.as_view(), name='checkout-create'),
     path('checkouts/', CheckoutListView.as_view(), name='checkout-list'),
+    path('checkoutsadmin/', CheckoutAdminListView.as_view(), name='checkout-list'),
+    path('checkout/<int:checkout_id>/approve/', ApproveCheckoutView.as_view(), name='checkout-approve'),
+    path('release-asset/', ReleaseAssetView.as_view(), name='release-asset'),
+    
+    path('checkout/<int:pk>/update/', CheckoutUpdateView.as_view(), name='checkout-update'),
+    
+    
     
 ]

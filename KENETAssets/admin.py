@@ -23,6 +23,8 @@ admin.site.register(Cart)
 admin.site.register(Checkout)
 admin.site.register(AssetMovement)
 admin.site.register(Suppliers)
+admin.site.register(ReleaseAdminFormData)
+
 
 
 
