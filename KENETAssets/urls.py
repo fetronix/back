@@ -11,7 +11,7 @@ router.register(r'users', UserViewSet)
 
 
 urlpatterns = [
-    # Your existing paths
+    
     path('api/login/', LoginView.as_view(), name='login'),  # your existing login view if using token auth
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Obtain token
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
@@ -28,20 +28,13 @@ urlpatterns = [
  
     path('cart/add/<int:asset_id>/', AddToCartView.as_view(), name='add-to-cart'),
     path('cart/remove/<int:asset_id>/', RemoveFromCartView.as_view(), name='remove-from-cart'),
-    path('cart/', CartListView.as_view(), name='cart-list'),  # New path to view cart items
-    path('release-form/', release_form, name='release-form'),  
-    # Success page URL
-    path('success/', ReleaseFormSuccessView.as_view(), name='release_form_success'),
-    
-    path('download-pdf/', render_pdf_view, name='download_pdf'),
-    
+    path('cart/', CartListView.as_view(), name='cart-list'),  
+
     
     path('checkout/', CheckoutCreateView.as_view(), name='checkout-create'),
     path('checkouts/', CheckoutListView.as_view(), name='checkout-list'),
     path('checkoutsadmin/', CheckoutAdminListView.as_view(), name='checkout-list'),
     path('checkout/<int:checkout_id>/approve/', ApproveCheckoutView.as_view(), name='checkout-approve'),
-    path('release-asset/', ReleaseAssetView.as_view(), name='release-asset'),
-    
     path('checkout/<int:pk>/update/', CheckoutUpdateView.as_view(), name='checkout-update'),
     
     

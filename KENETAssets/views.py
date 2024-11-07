@@ -8,8 +8,10 @@ from rest_framework.permissions import IsAuthenticated  # You can use any permis
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import *  # Assuming you've already created a LoginSerializer
+from .serializers import *  
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAdminUser
+
 
 
 class LoginView(APIView):
@@ -111,16 +113,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     
-
-
-# views.py
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Cart, Assets
-from .serializers import CartSerializer, CartDetailSerializer
-
+    
 class CartListView(generics.ListAPIView):
     serializer_class = CartSerializer
     
@@ -163,91 +156,6 @@ class RemoveFromCartView(APIView):
             return Response({'message': 'Item not in Dispatch basket'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import ReleaseFormData  # Assuming you have a model to save form data
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from weasyprint import HTML
-
-def release_form(request):
-    if request.method == "POST":
-        # Extract data from the form
-        name = request.POST.get('name')
-        date = request.POST.get('date')
-        current_location = request.POST.get('current_location')
-        new_location = request.POST.get('new_location')
-        description = request.POST.get('description')
-        quantity_required = request.POST.get('quantity_required')
-        quantity_issued = request.POST.get('quantity_issued')
-        serial_number = request.POST.get('serial_number')
-        kenet_tag = request.POST.get('kenet_tag')
-        authorizing_name = request.POST.get('authorizing_name')
-        authorization_date = request.POST.get('authorization_date')
-
-        # Save the data to the database (you should define the ReleaseFormData model accordingly)
-        release_form_data = ReleaseFormData(
-            name=name,
-            date=date,
-            current_location=current_location,
-            new_location=new_location,
-            description=description,
-            quantity_required=quantity_required,
-            quantity_issued=quantity_issued,
-            serial_number=serial_number,
-            kenet_tag=kenet_tag,
-            authorizing_name=authorizing_name,
-            authorization_date=authorization_date,
-        )
-        release_form_data.save()
-
-        # Redirect to a success page (or render the same page with a success message)
-        return redirect('release_form_success')  # Define a success URL or page
-
-    return render(request, 'KENETAssets/release_form.html')
-
-
-from django.views.generic import TemplateView
-
-# Success view
-class ReleaseFormSuccessView(TemplateView):
-    template_name = 'KENETAssets/success.html'
-    
-
-def render_pdf_view(request):
-    # Example context data. Replace or expand with actual data as needed.
-    context = {
-        'name': request.POST.get('name', 'John Doe'),
-        'date': timezone.now().date(),
-        'current_location': request.POST.get('current_location', 'Nairobi'),
-        'new_location': request.POST.get('new_location', 'Mombasa'),
-        'description': request.POST.get('description', 'Laptop'),
-        'quantity_required': request.POST.get('quantity_required', 1),
-        'quantity_issued': request.POST.get('quantity_issued', 1),
-        'serial_number': request.POST.get('serial_number', 'SN123456'),
-        'kenet_tag': request.POST.get('kenet_tag', 'KENET001'),
-        'authorizing_name': request.POST.get('authorizing_name', 'Jane Doe'),
-        'authorization_date': request.POST.get('authorization_date', timezone.now().date()),
-    }
-
-    # Render the HTML template with the context data
-    html_string = render_to_string('KENETAssets/release_form.html', context)
-    
-    # Create PDF from HTML
-    html = HTML(string=html_string)
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="KENET_Release_Form.pdf"'
-    html.write_pdf(response)
-    
-    return response
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from .models import Cart, Checkout, Assets
-from .serializers import CheckoutSerializer  # Import the new serializer
 
 class CheckoutCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -291,19 +199,10 @@ class CheckoutListView(generics.ListAPIView):
 
 
 class CheckoutAdminListView(generics.ListAPIView):
-    # permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated] 
     queryset = Checkout.objects.all()
     serializer_class = CheckoutSerializer
 
-
-# views.py
-
-from rest_framework.permissions import IsAdminUser
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.views import APIView
-from .models import Checkout, Assets, Cart
-from .serializers import CheckoutSerializer
 
 class ApproveCheckoutView(APIView):
     permission_classes = [IsAdminUser]  # Only admins can approve checkouts
@@ -346,27 +245,6 @@ class ApproveCheckoutView(APIView):
             return Response({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-from rest_framework import status
-from rest_framework.generics import CreateAPIView
-from rest_framework.response import Response
-from .models import ReleaseFormData
-from .serializers import ReleaseFormDataSerializer
-
-class ReleaseAssetView(CreateAPIView):
-    queryset = ReleaseAdminFormData.objects.all()
-    serializer_class = ReleaseFormDataSerializer
-
-    def perform_create(self, serializer):
-        # If you need to modify the data before saving, you can do it here
-        # For example, you can set the user or any other data manually if needed
-        serializer.save()
-
-
-class ReleaseAdminListView(generics.ListAPIView):
-    # permission_classes = [IsAuthenticated] 
-    queryset = ReleaseAdminFormData.objects.all()
-    serializer_class = ReleaseFormDataSerializer
-    
 
 class CheckoutUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Checkout.objects.all()

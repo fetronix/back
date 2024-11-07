@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import *
 
+from django.contrib.auth.admin import UserAdmin
 class AssetsAdmin(admin.ModelAdmin):
     # Fields to display in the list view
     list_display = ('asset_description','category','person_receiving', 'serial_number', 'kenet_tag', 'location','new_location', 'status', 'date_received')
@@ -23,20 +24,6 @@ admin.site.register(Cart)
 admin.site.register(Checkout)
 admin.site.register(AssetMovement)
 admin.site.register(Suppliers)
-admin.site.register(ReleaseAdminFormData)
-
-
-
-
-@admin.register(ReleaseFormData)
-class ReleaseFormDataAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date', 'current_location', 'new_location', 'description', 'quantity_required', 'quantity_issued', 'created_at')
-    list_filter = ('date', 'authorization_date', 'created_at')
-    search_fields = ('name', 'serial_number', 'kenet_tag', 'authorizing_name')
-
-from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser  # Ensure this points to your CustomUser model
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser

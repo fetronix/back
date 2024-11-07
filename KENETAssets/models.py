@@ -13,6 +13,8 @@ import base64
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 
+
+
 class UserRoles(models.TextChoices):
     ADMIN = 'admin', 'Admin'
     NETWORK_ADMIN = 'network_admin', 'Network Admin'
@@ -54,7 +56,7 @@ class Suppliers(models.Model):
             verbose_name_plural = 'Suppliers'
 
 
-# Existing models
+
 class Delivery(models.Model):
     supplier_name = models.ForeignKey(Suppliers, on_delete=models.CASCADE, related_name='primary_suppliers', blank=True, null=True)
     quantity = models.PositiveIntegerField()
@@ -145,7 +147,7 @@ class Assets(models.Model):
         verbose_name = 'Asset'
         verbose_name_plural = 'Assets'
             
-# models.py
+
 
 class Cart(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -159,8 +161,7 @@ class Cart(models.Model):
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
 
 
-from django.db import models
-from django.conf import settings
+
 
 class Checkout(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -219,71 +220,7 @@ class Checkout(models.Model):
             raise ValidationError("Authorizing name cannot be empty.")
         
 
-class ReleaseFormData(models.Model):
-    # Fields from the form
-    name = models.CharField(max_length=255)
-    date = models.DateField()
-    current_location = models.CharField(max_length=255)
-    new_location = models.CharField(max_length=255)
-    description = models.TextField()
-    quantity_required = models.PositiveIntegerField()
-    quantity_issued = models.PositiveIntegerField()
-    serial_number = models.CharField(max_length=100)
-    kenet_tag = models.CharField(max_length=100)
-    authorizing_name = models.CharField(max_length=255)
-    authorization_date = models.DateField()
-    
 
-    # Optional: Add timestamp for when the form was submitted
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.name} - {self.date}"
-    
-    
-
-
-class ReleaseAdminFormData(models.Model):
-    # Fields for asset details
-    asset_name = models.CharField(max_length=255)
-    serial_number = models.CharField(max_length=100)
-    kenet_tag = models.CharField(max_length=100)
-    current_location = models.CharField(max_length=255)
-    new_location = models.CharField(max_length=255)
-    
-    # Other fields from the form
-    date = models.DateField(auto_now=True)  # Automatically sets the current date
-    quantity_required = models.PositiveIntegerField(default=1)  # Default value of 1
-    quantity_issued = models.PositiveIntegerField(default=1)  # Default value of 1
-    authorizing_name = models.CharField(max_length=255)
-
-    # Optional: Add timestamp for when the form was created
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    # Field for storing the signature (can be an image file)
-    signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
-
-    # Automatically set the authorization date to the current date
-    authorization_date = models.DateField(auto_now_add=True)
-    
-    
-    def save_signature(self, signature_base64):
-        try:
-            # Split the data if it contains a MIME type prefix
-            if ',' in signature_base64:
-                header, data = signature_base64.split(',')
-            else:
-                # If no header is found, assume it's just the base64 data
-                data = signature_base64
-
-            # Decode and save as image
-            decoded_file = base64.b64decode(data)
-            self.signature_image.save('signature.png', ContentFile(decoded_file), save=False)
-        except Exception as e:
-            raise ValidationError(f"Failed to save signature: {e}")
-
-    def __str__(self):
-        return f"{self.asset_name} - {self.serial_number} - {self.date}"
 
     
 class AssetMovement(models.Model):
@@ -303,12 +240,4 @@ class AssetMovement(models.Model):
         ordering = ['-movement_date']  # Orders by most recent movements first
         
         
-from rest_framework import serializers
-from .models import ReleaseFormData
-
-class ReleaseFormDataSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ReleaseAdminFormData
-        fields = ['asset_name', 'serial_number', 'kenet_tag', 'current_location', 'new_location', 'date', 'quantity_required', 'quantity_issued', 'authorizing_name', 'signature_image', 'authorization_date', 'created_at']
-
 
