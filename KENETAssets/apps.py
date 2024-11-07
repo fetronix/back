@@ -8,5 +8,8 @@ class KENETAssetsConfig(AppConfig):
     
     def ready(self):
         import KENETAssets.tasks 
+        
+        
+    
     
     

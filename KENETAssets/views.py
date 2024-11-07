@@ -12,6 +12,10 @@ from .serializers import *
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAdminUser
 
+from background_task import background
+from django.http import JsonResponse
+from .tasks import process_rejected_cart_items  # Import your background task
+
 
 
 class LoginView(APIView):
@@ -243,6 +247,53 @@ class ApproveCheckoutView(APIView):
 
         except Checkout.DoesNotExist:
             return Response({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
+
+class RejectCheckoutView(APIView):
+    permission_classes = [IsAdminUser]  # Only admins can approve checkouts
+
+    def post(self, request, checkout_id, *args, **kwargs):
+        try:
+            checkout = Checkout.objects.get(id=checkout_id)
+            cart_items = checkout.cart_items.all()
+
+            # List to keep track of assets that couldn't be approved
+            failed_assets = []
+
+            for cart_item in cart_items:
+                asset = cart_item.asset
+                if asset.status == 'rejected':
+                    # If the asset is already rejected, add to the failed_assets list
+                    failed_assets.append(f"Asset {asset.serial_number} is already rejected.")
+                elif asset.status == 'pending_approval':
+                    # Reject the asset if it's pending approval
+                    asset.status = 'rejected'
+                    asset.save()
+                else:
+                    # If asset status is not "pending_approval", you can either skip or handle it differently
+                    failed_assets.append(f"Asset {asset.serial_number} cannot be rejected due to its current status: {asset.status}.")
+
+            # If there are no failed assets, trigger the background task
+            if not failed_assets:
+                # Trigger the background task to handle cart and asset cleanup after rejection
+                # Correct call to background task
+                process_rejected_cart_items() 
+                
+                return JsonResponse(
+                    {"detail": "All assets in the checkout have been rejected and processed."},
+                    status=status.HTTP_200_OK
+                )
+
+            # If there are failed assets, return a message with all the failed ones
+            return JsonResponse(
+                {"detail": "Some assets could not be rejected.", "failed_assets": failed_assets},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        except Checkout.DoesNotExist:
+            return JsonResponse({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 

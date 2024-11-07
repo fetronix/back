@@ -117,6 +117,7 @@ class Assets(models.Model):
         ('pending_release', 'Pending Release'),
         ('pending_approval', 'Pending Approval '),
         ('approved', 'Approved by Admin '),
+        ('rejected', 'Denied by Admin '),
     ]
 
     date_received = models.DateField(auto_now_add=True)
