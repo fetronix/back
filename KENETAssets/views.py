@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAdminUser
 
 from background_task import background
 from django.http import JsonResponse
-from .tasks import process_rejected_cart_items  # Import your background task
+from .tasks import *  # Import your background task
 
 
 
@@ -228,12 +228,14 @@ class ApproveCheckoutView(APIView):
                     # Approve the asset if it's pending approval
                     asset.status = 'approved'
                     asset.save()
+                    
                 else:
                     # If asset status is not "pending_approval", you can either skip or handle it differently
                     failed_assets.append(f"Asset {asset.serial_number} cannot be approved due to its current status: {asset.status}.")
 
             # If there are no failed assets, return success
             if not failed_assets:
+                save_approved_asset_movements() 
                 return Response(
                     {"detail": "All assets in the checkout have been approved."},
                     status=status.HTTP_200_OK

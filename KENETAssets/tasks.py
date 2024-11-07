@@ -59,3 +59,31 @@ def process_rejected_cart_items():
             checkout.delete()
 
     print("Rejected cart items have been processed and deleted.")
+
+from background_task import background
+from django.utils import timezone
+from .models import Cart, AssetsMovement, CustomUser, Assets
+
+@background(schedule=10)  # Run every 10 seconds (adjust as needed)
+def save_approved_asset_movements():
+    # Retrieve all cart items where asset status is 'approved' and has not yet been moved
+    approved_cart_items = Cart.objects.filter(asset__status='approved')
+
+    for cart_item in approved_cart_items:
+        asset = cart_item.asset
+
+        # Check if an AssetMovement record already exists for this asset to avoid duplicates
+        if not AssetsMovement.objects.filter(assets=asset).exists():
+            # Create a new AssetMovement record for the approved asset
+            AssetsMovement.objects.create(
+                assets=asset,
+                person_moving=cart_item.user, 
+                # Assuming cart_item has a user who moved the asset
+                comments=f"Automated movement for approved asset {asset.serial_number}"
+            )
+
+            # Optionally update the asset status to 'moved' or another status if needed
+            asset.status = 'onsite'
+            asset.save()
+
+            print(f"Movement record created for asset: {asset.serial_number}")

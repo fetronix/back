@@ -22,7 +22,7 @@ admin.site.register(Location)
 admin.site.register(Delivery)
 admin.site.register(Cart)
 admin.site.register(Checkout)
-admin.site.register(AssetMovement)
+admin.site.register(AssetsMovement)
 admin.site.register(Suppliers)
 
 class CustomUserAdmin(UserAdmin):

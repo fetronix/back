@@ -224,21 +224,17 @@ class Checkout(models.Model):
 
 
     
-class AssetMovement(models.Model):
-    assets = models.ManyToManyField(Assets, related_name='movements', help_text="Assets being moved")
-    source_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True, related_name='movement_source', help_text="Location from where the asset is being moved")
-    destination_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True, related_name='movement_destination', help_text="Location to where the asset is being moved")
-    movement_date = models.DateTimeField(default=timezone.now, help_text="Date and time of the movement")
+class AssetsMovement(models.Model):
+    assets = models.ForeignKey(Assets, on_delete=models.CASCADE, related_name='movements', help_text="Asset being moved")
+    date_created = models.DateTimeField(auto_now_add=True, help_text="Date when the movement was recorded")
     person_moving = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, help_text="Person responsible for moving the asset")
     comments = models.TextField(blank=True, null=True, help_text="Additional details about the movement")
 
     def __str__(self):
-        return f"Movement on {self.movement_date} by {self.person_moving}"
+        return f"Movement of asset {self.assets.serial_number} recorded on {self.date_created}"
 
     class Meta:
         verbose_name = 'Asset Movement'
         verbose_name_plural = 'Asset Movements'
-        ordering = ['-movement_date']  # Orders by most recent movements first
-        
-        
+        ordering = ['-date_created']  # Orders by most recent movements first
 
