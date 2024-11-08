@@ -13,7 +13,7 @@ import base64
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 
-
+from django.utils.html import format_html
 
 class UserRoles(models.TextChoices):
     ADMIN = 'admin', 'Admin'
@@ -67,6 +67,12 @@ class Delivery(models.Model):
     project = models.CharField(max_length=255)
     comments = models.TextField(blank=True)
     delivery_id = models.CharField(max_length=10, unique=True, editable=False, blank=True)  # SLK ID field
+    
+    @property
+    def semantic_autocomplete(self):
+        html = self.invoice_file()
+        return format_html(html)
+
 
     def save(self, *args, **kwargs):
         # Generate a unique SLK ID if not already set
@@ -81,7 +87,8 @@ class Delivery(models.Model):
             # Format as SLK ID (e.g., "SLK001")
             self.delivery_id = f'SLK{new_id:03d}'
         super().save(*args, **kwargs)
-
+        
+    
     def __str__(self):
         return f'Delivery {self.delivery_id} from {self.supplier_name} on {self.date_delivered}'
 
@@ -109,6 +116,8 @@ class Location(models.Model):
     class Meta:
             verbose_name = 'Location'
             verbose_name_plural = 'Locations'
+            
+
 
 class Assets(models.Model):
     STATUS_CHOICES = [

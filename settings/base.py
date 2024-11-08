@@ -29,8 +29,12 @@ SECRET_KEY = 'django-insecure-l^2s*xig=m^-zl)fk8eukp4qse+fn6c$f4vsc6fhd=+4ocvel(
 # Application definition
 
 INSTALLED_APPS = [
-    'admin_interface',
-    'colorfield',
+    # 'admin_interface',
+    # 'colorfield',
+    # 'grappelli',
+    # 'djangocms_admin_style',
+    "semantic_admin",
+    "semantic_forms",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,6 +82,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+
+# SEMANTIC_APP_LIST = [
+#     {
+#         "app_label": "KENETAssets",
+#         "models": [{"object_name": "Delivery"}, {"object_name": "Assets"}],
+#     },
+# ]
+
+SEMANTIC_APP_LIST = [{ "app_label": "KENETAssets" },{ "app_label": "background_task" }]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
