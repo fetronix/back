@@ -18,7 +18,21 @@ class AssetsAdmin(admin.ModelAdmin):
 # Register the Assets model with the custom admin class
 admin.site.register(Assets, AssetsAdmin)
 admin.site.register(Category)
-admin.site.register(Location)
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
+    # Display 'name' and 'name_alias' in the list view
+    list_display = ('name', 'name_alias')
+
+    # Add search functionality for 'name' and 'name_alias'
+    search_fields = ('name', 'name_alias')
+
+    # If you want to filter by other fields, add them to 'list_filter'
+    # (Assumes there are fields like 'created_at' or other categorical fields)
+    list_filter = ('name', 'name_alias')
+    
+    # Set default ordering alphabetically by 'name' (A to Z)
+    ordering = ('name',)  # Add '-name' for Z to A ordering
+    
 admin.site.register(Delivery)
 admin.site.register(Cart)
 admin.site.register(Checkout)

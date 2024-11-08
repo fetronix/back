@@ -102,9 +102,10 @@ class Category(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
+    name_alias = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.name_alias}"
     class Meta:
             verbose_name = 'Location'
             verbose_name_plural = 'Locations'
@@ -221,9 +222,6 @@ class Checkout(models.Model):
             raise ValidationError("Authorizing name cannot be empty.")
         
 
-
-
-    
 class AssetsMovement(models.Model):
     assets = models.ForeignKey(Assets, on_delete=models.CASCADE, related_name='movements', help_text="Asset being moved")
     date_created = models.DateTimeField(auto_now_add=True, help_text="Date when the movement was recorded")
