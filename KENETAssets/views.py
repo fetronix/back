@@ -319,3 +319,49 @@ def custom_404(request, exception=None):
 
 def custom_505(request, exception=None):
     return render(request, 'qyfy/505.html', status=404)
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='login-form')
+def home_view(request):
+    # Context data you want to pass to the template
+    context = {
+        'user': request.user,
+        'message': "Welcome to the homepage!",
+    }
+    return render(request, 'qyfy/home.html', context)
+
+
+    
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.views import View
+from django.urls import path
+
+class LoginFormView(View):
+    def get(self, request):
+        return render(request, 'qyfy/login.html')
+
+    def post(self, request):
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            # Log the user in and redirect to the homepage
+            login(request, user)
+            return redirect('home')
+        else:
+            # Return an error message if login failed
+            return render(request, 'qyfy/login.html', {'error': 'Invalid username or password'})
+
+from django.contrib.auth import logout
+def logout_view(request):
+    logout(request)  # Logs out the user
+    return redirect('login-form') 

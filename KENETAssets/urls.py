@@ -41,6 +41,10 @@ urlpatterns = [
     path('checkout/<int:checkout_id>/reject/', RejectCheckoutView.as_view(), name='checkout-reject'),
     path('checkout/<int:pk>/update/', CheckoutUpdateView.as_view(), name='checkout-update'),
     
+    path('home/', home_view, name='home'),
+    path('login_form/', LoginFormView.as_view(), name='login-form'),
+    path('logout/', logout_view, name='logout'),
+    
     
     
 ]
