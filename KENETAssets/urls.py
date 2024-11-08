@@ -9,6 +9,9 @@ router.register(r'suppliers', SupplierViewSet)
 router.register(r'mydeliveries', DeliveryViewSet)
 router.register(r'users', UserViewSet)
 
+handler404 = 'KENETAssets.views.custom_404'
+handler500 = 'KENETAssets.views.custom_505'
+
 
 urlpatterns = [
     

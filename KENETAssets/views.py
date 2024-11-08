@@ -309,3 +309,13 @@ class CheckoutUpdateView(generics.RetrieveUpdateAPIView):
     #     return Checkout.objects.filter(user=self.request.user)
     
     
+    
+from django.http import HttpResponseNotFound
+from django.shortcuts import render
+
+def custom_404(request, exception=None):
+    return render(request, 'qyfy/404.html', status=404)
+
+
+def custom_505(request, exception=None):
+    return render(request, 'qyfy/505.html', status=404)
