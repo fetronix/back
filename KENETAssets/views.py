@@ -207,41 +207,57 @@ class CheckoutAdminListView(generics.ListAPIView):
     queryset = Checkout.objects.all()
     serializer_class = CheckoutSerializer
 
+from rest_framework.generics import RetrieveAPIView
+
+class CheckoutDetailView(RetrieveAPIView):
+    queryset = Checkout.objects.all()
+    serializer_class = CheckoutSerializer
+    lookup_field = 'id'
+    
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import Checkout
 
 class ApproveCheckoutView(APIView):
-    permission_classes = [IsAdminUser]  # Only admins can approve checkouts
+    permission_classes = [IsAdminUser]
 
     def post(self, request, checkout_id, *args, **kwargs):
         try:
             checkout = Checkout.objects.get(id=checkout_id)
             cart_items = checkout.cart_items.all()
 
-            # List to keep track of assets that couldn't be approved
             failed_assets = []
-
             for cart_item in cart_items:
                 asset = cart_item.asset
                 if asset.status == 'approved':
-                    # If the asset is already approved, add to the failed_assets list
                     failed_assets.append(f"Asset {asset.serial_number} is already approved.")
                 elif asset.status == 'pending_approval':
-                    # Approve the asset if it's pending approval
                     asset.status = 'approved'
                     asset.save()
-                    
                 else:
-                    # If asset status is not "pending_approval", you can either skip or handle it differently
                     failed_assets.append(f"Asset {asset.serial_number} cannot be approved due to its current status: {asset.status}.")
 
-            # If there are no failed assets, return success
             if not failed_assets:
-                save_approved_asset_movements() 
+                # Generate the checkout detail URL link
+                checkout_url = request.build_absolute_uri(reverse('checkout-detail', args=[checkout_id]))
+
+                # Save the generated URL in the `checkout_url_link` field
+                checkout.checkout_url_link = checkout_url
+                checkout.save()
+
+                save_approved_asset_movements()
+
                 return Response(
-                    {"detail": "All assets in the checkout have been approved."},
+                    {
+                        "detail": "All assets in the checkout have been approved.",
+                        "checkout_url_link": checkout_url
+                    },
                     status=status.HTTP_200_OK
                 )
 
-            # If there are failed assets, return a message with all the failed ones
             return Response(
                 {"detail": "Some assets could not be approved.", "failed_assets": failed_assets},
                 status=status.HTTP_400_BAD_REQUEST
@@ -249,8 +265,6 @@ class ApproveCheckoutView(APIView):
 
         except Checkout.DoesNotExist:
             return Response({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-
 
 
 class RejectCheckoutView(APIView):

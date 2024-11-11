@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KENET Assets</title>
+    <title>Dispatching Items List</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         .navbar-custom {
@@ -31,12 +31,9 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
-            <!-- Logo -->
             <a class="navbar-brand" href="#">
-                <img src="{% static 'assets/images/logo.png' %}" alt="Logo" width="200" height="100" class="d-inline-block align-text-top">
+                <img src="{% static 'assets/images/logo.png' %}" alt="Logo" width="200" height="100">
             </a>
-
-            <!-- Navbar Links -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -49,10 +46,8 @@
                         <a class="nav-link" href="#">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kenet_release_form' %}">ReleaseForm</a>
+                        <a class="nav-link" href="{% url 'kenet_release_form' %}">Release Form</a>
                     </li>
-                    
-                    <!-- Logout Button for Authenticated Users -->
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="btn pill-button" href="{% url 'logout' %}">Logout</a>
@@ -64,58 +59,60 @@
     </nav>
 
     <!-- Main Content -->
-    
-    <!-- Main Content -->
     <div class="container mt-5">
-        <h2>Welcome, {{ user.first_name }} {{ user.last_name }}</h2>
-        <p>Your username is {{ user.username }}.</p>
-
-        <!-- Checkouts Table -->
-        <h3>All Checkouts</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Cart Items</th>
-                    <th>Checkout Date</th>
-                    <th>Remarks</th>
-                    <th>Signature</th>
-                    <th>Quantity Required</th>
-                    <th>Quantity Issued</th>
-                    <th>Authorizing Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for checkout in checkouts %}
-                    <tr>
-                        <td>
-                            {% for item in checkout.cart_items.all %}
-                                {{ item }}<br>
-                            {% empty %}
-                                No items in cart
-                            {% endfor %}
-                        </td>
-                        <td>{{ checkout.checkout_date }}</td>
-                        <td>{{ checkout.remarks|default:"No remarks" }}</td>
-                        <td>
-                            {% if checkout.signature_image %}
-                                <img src="{{ checkout.signature_image.url }}" alt="Signature" width="100">
-                            {% else %}
-                                No signature available
-                            {% endif %}
-                        </td>
-                        <td>{{ checkout.quantity_required }}</td>
-                        <td>{{ checkout.quantity_issued }}</td>
-                        <td>{{ checkout.authorizing_name }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="7">No checkouts available.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <h1>Dispatching Items List</h1>
+        {% if checkouts %}
+            {% for item in checkouts %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">User Dispatching: {{ item.user.username }}</h5>
+                        <p>Checking Out Date: {{ item.checkout_date }}</p>
+                        <hr>
+                        <h6>Dispatch Items</h6>
+                        {% if item.cart_items.all %}
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Asset Name</th>
+                                            <th>Asset Model</th>
+                                            <th>Serial Number</th>
+                                            <th>Items Status</th>
+                                            <th>Kenet Tag</th>
+                                            <th>Location Received</th>
+                                            <th>Location Going</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cart_item in item.cart_items.all %}
+                                            <tr>
+                                                <td>{{ cart_item.asset.asset_description }}</td>
+                                                <td>{{ cart_item.asset.asset_description_model }}</td>
+                                                <td>{{ cart_item.asset.serial_number }}</td>
+                                                <td>{{ cart_item.asset.status }}</td>
+                                                <td>{{ cart_item.asset.kenet_tag }}</td>
+                                                <td>{{ cart_item.asset.location }}</td>
+                                                <td>{{ cart_item.asset.new_location }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="6">No items in cart.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p>No items in cart.</p>
+                        {% endif %}
+                        <a href="http://197.136.16.164:8000/app/kenet-release-form/" target="_blank" class="btn btn-primary mt-3">Open External URL</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No checkout items available.</p>
+        {% endif %}
     </div>
-
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

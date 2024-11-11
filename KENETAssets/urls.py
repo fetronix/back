@@ -40,6 +40,7 @@ urlpatterns = [
     path('checkout/<int:checkout_id>/approve/', ApproveCheckoutView.as_view(), name='checkout-approve'),
     path('checkout/<int:checkout_id>/reject/', RejectCheckoutView.as_view(), name='checkout-reject'),
     path('checkout/<int:pk>/update/', CheckoutUpdateView.as_view(), name='checkout-update'),
+    path('checkout/<int:id>/', CheckoutDetailView.as_view(), name='checkout-detail'),
     
     path('logingorm/', login_view, name='login-form'),
     path('logout/', logout_view, name='logout'),

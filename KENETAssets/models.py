@@ -87,11 +87,11 @@ class Delivery(models.Model):
         
     
     def __str__(self):
-        return f'Delivery {self.delivery_id} from {self.supplier_name} on {self.date_delivered}'
+        return f'Consignment {self.delivery_id} from {self.supplier_name} on {self.date_delivered}'
 
     class Meta:
-        verbose_name = 'Delivery'
-        verbose_name_plural = 'Deliveries'
+        verbose_name = 'Received Consignment'
+        verbose_name_plural = 'Received Consignments'
 
 
 class Category(models.Model):
@@ -167,6 +167,12 @@ class Cart(models.Model):
 
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
+        
+    
+    class Meta:
+        verbose_name = 'Dispatch Basket'
+        verbose_name_plural = 'Dispatch Baskets'
+        # ordering = ['-date_created']  # Orders by most recent movements first
 
 
 
@@ -179,12 +185,18 @@ class Checkout(models.Model):
     remarks = models.TextField(blank=True, null=True)  # Optional remarks field
     
     signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
+    user_signature_image = models.ImageField(upload_to='signatures/users/', null=True, blank=True)
     quantity_required = models.PositiveIntegerField(default=1)  # Default value of 1
     quantity_issued = models.PositiveIntegerField(default=1)  # Default value of 1
     authorizing_name = models.CharField(max_length=255)
+    
+      # New Field for Checkout URL Link
+    checkout_url_link = models.URLField(blank=True, null=True, help_text="Optional URL for checkout link")
+
+
 
     def __str__(self):
-        return f"Checkout by {self.user.username} on {self.checkout_date}"
+        return f"Dispatched by {self.user.username} on {self.checkout_date}"
 
     def save_signature(self, signature_base64):
         try:
@@ -226,6 +238,11 @@ class Checkout(models.Model):
         """
         if not self.authorizing_name:
             raise ValidationError("Authorizing name cannot be empty.")
+        
+    class Meta:
+        verbose_name = 'Dispatch List'
+        verbose_name_plural = 'Dispatch Lists'
+        # ordering = ['-date_created']  # Orders by most recent movements first
         
 
 class AssetsMovement(models.Model):
