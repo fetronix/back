@@ -105,7 +105,7 @@
                         {% else %}
                             <p>No items in cart.</p>
                         {% endif %}
-                        <a href="http://197.136.16.164:8000/app/kenet-release-form/" target="_blank" class="btn btn-primary mt-3">Open External URL</a>
+                        <a href="{{item.checkout_url_link}}" target="_blank" class="btn btn-primary mt-3">{{item.checkout_url_link}}</a>
                     </div>
                 </div>
             {% endfor %}
