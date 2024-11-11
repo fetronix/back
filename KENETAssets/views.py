@@ -323,45 +323,56 @@ def custom_505(request, exception=None):
 
 
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-
-@login_required(login_url='login-form')
-def home_view(request):
-    # Context data you want to pass to the template
-    context = {
-        'user': request.user,
-        'message': "Welcome to the homepage!",
-    }
-    return render(request, 'qyfy/home.html', context)
-
-
-    
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponse
 from django.contrib import messages
-from django.views import View
-from django.urls import path
 
-class LoginFormView(View):
-    def get(self, request):
-        return render(request, 'qyfy/login.html')
-
-    def post(self, request):
+def login_view(request):
+    if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
         
-        # Authenticate the user
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
-            # Log the user in and redirect to the homepage
             login(request, user)
-            return redirect('home')
+            messages.success(request, f'Welcome back, {user.first_name}!')
+            return redirect('home')  # Redirect to the home page after login
         else:
-            # Return an error message if login failed
-            return render(request, 'qyfy/login.html', {'error': 'Invalid username or password'})
+            error_message = "Invalid username or password"
+            return render(request, 'login.html', {'error_message': error_message})
+    
+    return render(request, 'login.html')
 
+
+
+
+def home_view(request):
+    checkouts = Checkout.objects.all()  # Retrieve all checkout records
+    return render(request, 'home.html', {
+        'user': request.user,
+        'checkouts': checkouts  # Pass checkouts to the template
+    })
+
+
+
+from django.shortcuts import redirect
 from django.contrib.auth import logout
+from django.contrib import messages
+
 def logout_view(request):
-    logout(request)  # Logs out the user
-    return redirect('login-form') 
+    logout(request)
+    messages.info(request, "You have been successfully logged out.")
+    return redirect('login-form')  # Redirect to the login page or home page
+
+
+def kenet_release_form_view(request):
+    # You can add context data if needed, for example:
+    context = {
+        'logo_url': '/static/assets/images/logo.png',
+        'stamp_url': '/static/assets/images/kenet_stamp.png'
+        }
+    return render(request, 'kenet_release_form.html', context)
+    
+    # If no additional context is needed, just render the template
+    # return render(request, 'kenet_release_form.html')

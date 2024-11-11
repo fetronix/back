@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KENET Release Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+        }
+        .header img {
+            width: 150px;
+            height: auto;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            font-weight: bold;
+        }
+        .signature-pad {
+            border: 1px solid black;
+            height: 100px;
+            margin-top: 10px;
+        }
+        .instructions {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        /* Centering the content in the footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #ccc;
+        }
+        
+        /* Styling the version text and image */
+        .footer p {
+            margin: 10px 0;
+        }
+
+        .footer img {
+            width: 200px;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        /* Styling the submit button */
+        .footer button {
+            padding: 10px 20px;
+            border: 2px solid #800080; /* Purple border */
+            background-color: transparent; /* Transparent background */
+            color: #800080; /* Purple text color */
+            border-radius: 30px; /* Rounded corners */
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 20px;
+        }
+
+        /* Button hover effect */
+        .footer button:hover {
+            background-color: #800080; /* Purple background on hover */
+            color: white; /* White text on hover */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    {% csrf_token %}
+    <div class="header">
+        <h1>EQUIPMENT RELEASE FORM FOR KENET</h1>
+        <img src="{{ logo_url }}"  alt="KENET Logo">
+        <p>KENET SECRETARIAT<br>P.O BOX 30244 00100, NAIROBI.<br>E-mail: info@kenet.or.ke<br>Tel: 0732 150000 / 0703 044500</p>
+    </div>
+
+    <div class="instructions">
+        <strong>INSTRUCTIONS:</strong>
+        <p>1) Complete boxes 1 through to 3.</p>
+        <p>2) Enter the description and quantity only under Property description.</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>1. Name & Date:</th>
+                <th>2. Organization:</th>
+                <th>3. Location:</th>
+                <th>4. Signature:</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input type="text" placeholder="Enter Name">
+                    <input type="date">
+                </td>
+                <td>
+                    <input type="text" value="KENET" disabled>
+                </td>
+                <td>
+                    <input type="text" placeholder="Current Location">
+                    <input type="text" placeholder="New Location">
+                </td>
+                <td>
+                    <div class="signature-pad">
+                        <!-- Placeholder for the signature pad -->
+                        [Signature Pad Placeholder]
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+
+    <h2 class="section-title">Property Description</h2>
+    <table>
+        <tr>
+            <th>Description</th>
+            <th>Quantity Required</th>
+            <th>Quantity Issued</th>
+            <th>Serial Number</th>
+            <th>KENET Tag Number</th>
+        </tr>
+        <tr>
+            <td><textarea placeholder="Description"></textarea></td>
+            <td><input type="text" placeholder="Quantity Required"></td>
+            <td><input type="text" placeholder="Quantity Issued"></td>
+            <td><input type="text" placeholder="Serial Number"></td>
+            <td><input type="text" placeholder="KENET Tag Number"></td>
+        </tr>
+    </table>
+
+    <h2 class="section-title">Authorizing Signature</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Signature</th>
+            <th>Date</th>
+        </tr>
+        <tr>
+            <td><input type="text" placeholder="Name"></td>
+            <td><div class="signature-pad">[Signature Pad Placeholder]</div></td>
+            <td><input type="date"></td>
+        </tr>
+    </table>
+
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>Version 1.0.0   Reference: KS/ERF</p>
+        <img src="{{ stamp_url }}"  width="200" height="200"  alt="KENET Stamp">
+        <button onclick="printForm()">Print</button>
+    </div>
+
+    <script>
+        function printForm() {
+            window.print();
+        }
+    </script>
+</div>
+</body>
+</html>

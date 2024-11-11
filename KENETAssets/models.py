@@ -16,17 +16,14 @@ from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 
 class UserRoles(models.TextChoices):
-    ADMIN = 'admin', 'Admin'
-    NETWORK_ADMIN = 'network_admin', 'Network Admin'
-    NOC_USER = 'noc_user', 'NOC User'
-    SYSTEM_ADMIN = 'system_admin', 'System Admin'
-    NETWORK_ENGINEER = 'network_engineer', 'Network Engineer'
+    CAN_VIEW = 'can_view', 'Can View'
+    CAN_VERIFY_ITEMS = 'can_checkout_items', 'Can Checkout Items'
 
 class CustomUser(AbstractUser):
     role = models.CharField(
         max_length=50,
         choices=UserRoles.choices,
-        default=UserRoles.NOC_USER  # Default role can be changed as needed
+        default=UserRoles.CAN_VIEW  # Default role can be changed as needed
     )
 
     def __str__(self):

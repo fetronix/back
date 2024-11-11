@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KENET Assets</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .navbar-custom {
+            background-color: #6b4083;
+        }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: white;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #d1b3e0;
+        }
+        .pill-button {
+            background-color: white;
+            color: black;
+            border-radius: 50px;
+            border: 1px solid black;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'assets/images/logo.png' %}" alt="Logo" width="200" height="100" class="d-inline-block align-text-top">
+            </a>
+
+            <!-- Navbar Links -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'kenet_release_form' %}">ReleaseForm</a>
+                    </li>
+                    
+                    <!-- Logout Button for Authenticated Users -->
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="btn pill-button" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h2>Welcome, {{ user.first_name }} {{ user.last_name }}</h2>
+        <p>Your username is {{ user.username }}.</p>
+
+        <!-- Checkouts Table -->
+        <h3>All Checkouts</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Cart Items</th>
+                    <th>Checkout Date</th>
+                    <th>Remarks</th>
+                    <th>Signature</th>
+                    <th>Quantity Required</th>
+                    <th>Quantity Issued</th>
+                    <th>Authorizing Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for checkout in checkouts %}
+                    <tr>
+                        <td>
+                            {% for item in checkout.cart_items.all %}
+                                {{ item }}<br>
+                            {% empty %}
+                                No items in cart
+                            {% endfor %}
+                        </td>
+                        <td>{{ checkout.checkout_date }}</td>
+                        <td>{{ checkout.remarks|default:"No remarks" }}</td>
+                        <td>
+                            {% if checkout.signature_image %}
+                                <img src="{{ checkout.signature_image.url }}" alt="Signature" width="100">
+                            {% else %}
+                                No signature available
+                            {% endif %}
+                        </td>
+                        <td>{{ checkout.quantity_required }}</td>
+                        <td>{{ checkout.quantity_issued }}</td>
+                        <td>{{ checkout.authorizing_name }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">No checkouts available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
