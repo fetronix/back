@@ -137,6 +137,7 @@ class Assets(models.Model):
     kenet_tag = models.CharField(max_length=100, unique=True)
     going_location = models.CharField(max_length=100, null=True,blank=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
+    sent_to_erp = models.BooleanField(default=False)
     # going_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='going_location', blank=True, null=True)
     
     

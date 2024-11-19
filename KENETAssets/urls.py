@@ -52,4 +52,7 @@ urlpatterns = [
     path('assets/<int:asset_id>/return_decommissioned/', ReturnDecomissionedAssetView.as_view(), name='return-decommissioned-asset'),
     
     
+    # Moving datat to erp 
+    path('create-fixed-asset/<int:asset_id>/', create_fixed_asset, name='create_fixed_asset'),
+    
 ]

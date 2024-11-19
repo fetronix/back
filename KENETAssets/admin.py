@@ -7,25 +7,51 @@ from django.utils.html import format_html
 from .models import AssetsMovement
 from django.contrib import admin
 from .models import AssetsMovement
+from django.urls import reverse
+
+from django.utils.html import format_html
+from django.urls import reverse
+from django.shortcuts import redirect
 
 class AssetsAdmin(admin.ModelAdmin):
     # Fields to display in the list view
-    list_display = ('asset_description','asset_description_model','category','person_receiving', 'serial_number', 'kenet_tag', 'location','status', 'date_received')
+    list_display = ('asset_description', 'asset_description_model', 'category', 'person_receiving', 
+                    'serial_number', 'kenet_tag', 'location', 'status', 'date_received', 'custom_action')
     
     # Fields to search for in the admin interface
     search_fields = ('serial_number', 'kenet_tag', 'asset_description', 'location')
     
-    # Fields that can be edited directly from the list view
-    # list_editable = ('status',)
-
     # Filters to filter the data by status or date received
     list_filter = ('status', 'date_received')
-    
-      # Exclude new_location from the add/edit form
-    # exclude = ('new_location',)
 
-# Register the Assets model with the custom admin class
+    def custom_action(self, obj):
+        # If the asset has already been sent to ERP, show a green button with a new label
+        if obj.sent_to_erp:
+            return format_html(
+                '<button class="ui green button" type="button" disabled>Data Sent to ERP</button>'
+            )
+        else:
+            # Otherwise, show the normal "Send to ERP" button
+            url = reverse('create_fixed_asset', args=[obj.pk])  # URL for the ERP creation view
+            return format_html(
+                '<a href="{0}" class="ui blue button" type="button">Send to E.R.P</a>',
+                url
+            )
+
+    custom_action.short_description = 'Send to E.R.P'
+    custom_action.allow_tags = True
+
+    # Override the save model to update `sent_to_erp` field after sending data to ERP
+    def save_model(self, request, obj, form, change):
+        if change and 'sent_to_erp' not in form.changed_data:  # Only update if the object is saved
+            if obj.sent_to_erp:  # Check if the status is already sent to ERP
+                # Optional: Add your logic to update or trigger your ERP-related functionality here.
+                pass
+        super().save_model(request, obj, form, change)
+    
+# Register the admin class
 admin.site.register(Assets, AssetsAdmin)
+
 admin.site.register(Category)
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):

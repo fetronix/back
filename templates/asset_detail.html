@@ -1,0 +1,37 @@
+<!-- templates/asset_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Details</title>
+    <script>
+        function createAsset(assetId) {
+            fetch(`/create-fixed-asset/${assetId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => alert('Error: ' + error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Asset Details</h1>
+
+    <!-- Example of asset data -->
+    <p>Asset Description: {{ asset.asset_description }}</p>
+    <p>Serial Number: {{ asset.serial_number }}</p>
+    <p>Tag Number: {{ asset.kenet_tag }}</p>
+
+    <!-- Button to trigger SOAP request -->
+    <form method="post">
+        {% csrf_token %}
+        <button type="button" onclick="createAsset({{ asset.id }})">Create Fixed Asset</button>
+    </form>
+</body>
+</html>

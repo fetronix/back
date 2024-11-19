@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dispatching Items List</title>
+    <title>KENET Assets List</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         .navbar-custom {
@@ -60,60 +60,45 @@
 
     <!-- Main Content -->
     <div class="container mt-5">
-        <h1>Dispatching Items List</h1>
-        {% if checkouts %}
-            {% for item in checkouts %}
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">User Dispatching: {{ item.user.username }}</h5>
-                        <p>Checking Out Date: {{ item.checkout_date }}</p>
-                         <p>admin signature <img  src='{{ item.signature_image.url }}'></p>
-                        <hr>
-                        <h6>Dispatch Items</h6>
-                        {% if item.cart_items.all %}
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Asset Name</th>
-                                            <th>Asset Model</th>
-                                            <th>Serial Number</th>
-                                            <th>Items Status</th>
-                                            <th>Kenet Tag</th>
-                                            <th>Location Received</th>
-                                            <th>Location Going</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for cart_item in item.cart_items.all %}
-                                            <tr>
-                                                <td>{{ cart_item.asset.asset_description }}</td>
-                                                <td>{{ cart_item.asset.asset_description_model }}</td>
-                                                <td>{{ cart_item.asset.serial_number }}</td>
-                                                <td>{{ cart_item.asset.status }}</td>
-                                                <td>{{ cart_item.asset.kenet_tag }}</td>
-                                                <td>{{ cart_item.asset.location }}</td>
-                                                <td>{{ cart_item.asset.going_location }}</td>
-                                            </tr>
-                                        {% empty %}
-                                            <tr>
-                                                <td colspan="6">No items in cart.</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <p>No items in cart.</p>
-                        {% endif %}
-                        <a href="{% url 'checkout-detail' pk=item.id %}" target="_blank" class="btn btn-primary mt-3">View Checkout Details</a>
+        <h1>Assets List</h1>
 
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No checkout items available.</p>
-        {% endif %}
+        <!-- Display the list of assets -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Asset Description</th>
+                    <th>Serial Number</th>
+                    <th>Kenet Tag</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Category</th>
+                    <th>Date Received</th>
+                    <th>Actions</th> <!-- Add a column for the action button -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for asset in assets %}
+                    <tr>
+                        <td>{{ asset.asset_description }}</td>
+                        <td>{{ asset.serial_number }}</td>
+                        <td>{{ asset.kenet_tag }}</td>
+                        <td>{{ asset.location }}</td>
+                        <td>{{ asset.status }}</td>
+                        <td>{{ asset.category }}</td>
+                        <td>{{ asset.date_received }}</td>
+                        <td>
+                            <!-- Button to View Details -->
+                            <a href="{% url 'create_fixed_asset' asset.id %}" class="btn btn-primary">Send To ERP</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No assets available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
     </div>
 
     <!-- Bootstrap JS -->
