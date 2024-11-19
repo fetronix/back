@@ -27,7 +27,7 @@ class CustomUser(AbstractUser):
     )
 
     def __str__(self):
-        return self.username  # or return self.email if you prefer
+        return f"{self.first_name} {self.last_name}" # or return self.email if you prefer
 
     def clean(self):
         super().clean()  # Call the parent class's clean method
@@ -60,7 +60,7 @@ class Delivery(models.Model):
     date_delivered = models.DateField(auto_now_add=True)
     person_receiving = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, help_text="User who received the asset")
     invoice_file = models.FileField(upload_to='invoices/', null=True, blank=True)
-    invoice_number = models.CharField(max_length=100)
+    invoice_number = models.CharField(max_length=100,null=True,blank=True)
     project = models.CharField(max_length=255)
     comments = models.TextField(blank=True)
     delivery_id = models.CharField(max_length=10, unique=True, editable=False, blank=True)  # SLK ID field
@@ -109,7 +109,7 @@ class Location(models.Model):
     name_alias = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.name} - {self.name_alias}"
+        return f"{self.name}"
     class Meta:
             verbose_name = 'Location'
             verbose_name_plural = 'Locations'
@@ -121,6 +121,8 @@ class Assets(models.Model):
         ('instore', 'In Store'),
         ('faulty', 'Faulty'),
         ('onsite', 'On Site'),
+        ('faulty', 'Faulty'),
+        ('decommissioned', 'Decommissioned'),
         ('pending_release', 'Pending Release'),
         ('pending_approval', 'Pending Approval '),
         ('approved', 'Approved by Admin '),
@@ -133,8 +135,9 @@ class Assets(models.Model):
     asset_description_model = models.CharField(max_length=100, null=True, blank=True)
     serial_number = models.CharField(max_length=100, unique=True)
     kenet_tag = models.CharField(max_length=100, unique=True)
-    new_location = models.CharField(max_length=100, blank=True,null=True)
+    going_location = models.CharField(max_length=100, null=True,blank=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
+    # going_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='going_location', blank=True, null=True)
     
     
     status = models.CharField(
@@ -149,7 +152,7 @@ class Assets(models.Model):
     delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True, blank=True, related_name='assets', help_text="Associated delivery for this asset")
 
     def __str__(self):
-        return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id}) ({self.new_location})"
+        return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id}) ({self.going_location})"
 
     class Meta:
         verbose_name = 'Asset'
@@ -163,7 +166,7 @@ class Cart(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.asset.serial_number}- {self.asset.status}- {self.asset.kenet_tag}- {self.asset.location}- {self.asset.id}- {self.asset.new_location}- {self.added_at}"
+        return f"{self.user.username} - {self.asset.serial_number}- {self.asset.status}- {self.asset.kenet_tag}- {self.asset.location}- {self.asset.id}- {self.asset.going_location}- {self.added_at}"
 
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
@@ -175,87 +178,98 @@ class Cart(models.Model):
         # ordering = ['-date_created']  # Orders by most recent movements first
 
 
-
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+import base64
+from django.db import models
+from django.conf import settings
 
 class Checkout(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    # items = models.ManyToManyField('Cart')  # Link to Cart items
-    cart_items = models.ManyToManyField(Cart, related_name='checkouts')
+    cart_items = models.ManyToManyField('Cart', related_name='checkouts')
     checkout_date = models.DateTimeField(auto_now_add=True)
-    remarks = models.TextField(blank=True, null=True)  # Optional remarks field
+    remarks = models.TextField(blank=True, null=True)
     
     signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
     user_signature_image = models.ImageField(upload_to='signatures/users/', null=True, blank=True)
-    quantity_required = models.PositiveIntegerField(default=1)  # Default value of 1
-    quantity_issued = models.PositiveIntegerField(default=1)  # Default value of 1
-    authorizing_name = models.CharField(max_length=255)
-    
-      # New Field for Checkout URL Link
+    quantity_required = models.PositiveIntegerField(default=1)
+    quantity_issued = models.PositiveIntegerField(default=1)
+    # verifier_user = models.CharField(max_length=255, null=True, blank=True,)
+    verifier_user = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='verifier_user', on_delete=models.CASCADE,null=True,blank=True)
     checkout_url_link = models.URLField(blank=True, null=True, help_text="Optional URL for checkout link")
-
-
 
     def __str__(self):
         return f"Dispatched by {self.user.username} on {self.checkout_date}"
 
     def save_signature(self, signature_base64):
         try:
-            # Split the data if it contains a MIME type prefix
             if ',' in signature_base64:
                 header, data = signature_base64.split(',')
             else:
-                # If no header is found, assume it's just the base64 data
                 data = signature_base64
-
-            # Decode and save as image
             decoded_file = base64.b64decode(data)
             self.signature_image.save('signature.png', ContentFile(decoded_file), save=False)
         except Exception as e:
             raise ValidationError(f"Failed to save signature: {e}")
         
+    def save_user_signature(self, signature_base64):
+        try:
+            if ',' in signature_base64:
+                header, data = signature_base64.split(',')
+            else:
+                data = signature_base64
+            decoded_file = base64.b64decode(data)
+            self.user_signature_image.save('user_signature.png', ContentFile(decoded_file), save=False)
+        except Exception as e:
+            raise ValidationError(f"Failed to save signature: {e}")
+
+    def get_user_signature_url(self):
+        if self.user_signature_image and hasattr(self.user_signature_image, 'url'):
+            return self.user_signature_image.url
+        return '/static/default_signature.png'  # Fallback image URL if no signature is found
+    
+    def get_signature_image_url(self):
+        if self.signature_image and hasattr(self.signature_image, 'url'):
+            return self.signature_image.url
+        return '/static/default_signature.png'  # Fallback image URL if no signature is found
 
     def update_quantities(self, quantity_required: int, quantity_issued: int):
-        """
-        Update the quantities for this checkout.
-        """
         if quantity_issued > quantity_required:
             raise ValidationError("Quantity issued cannot exceed quantity required.")
-
         self.quantity_required = quantity_required
         self.quantity_issued = quantity_issued
         self.save()
 
     def add_remarks(self, remarks: str):
-        """
-        Add remarks to the checkout.
-        """
         self.remarks = remarks
         self.save()
 
     def validate_authorizing_name(self):
-        """
-        Ensure the authorizing name is set correctly.
-        """
         if not self.authorizing_name:
             raise ValidationError("Authorizing name cannot be empty.")
-        
+
     class Meta:
         verbose_name = 'Dispatch List'
         verbose_name_plural = 'Dispatch Lists'
-        # ordering = ['-date_created']  # Orders by most recent movements first
-        
+
 
 class AssetsMovement(models.Model):
     assets = models.ForeignKey(Assets, on_delete=models.CASCADE, related_name='movements', help_text="Asset being moved")
     date_created = models.DateTimeField(auto_now_add=True, help_text="Date when the movement was recorded")
     person_moving = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, help_text="Person responsible for moving the asset")
     comments = models.TextField(blank=True, null=True, help_text="Additional details about the movement")
+    asset_description = models.TextField(blank=True, null=True, help_text="Additional details about the asset")
+    asset_description_model = models.TextField(blank=True, null=True, help_text="Additional details about the asset")
+    serial_number = models.CharField(max_length=100, blank=True, null=True, help_text="The serial number of the asset")
+    kenet_tag = models.CharField(max_length=100, blank=True, null=True, help_text="The KENET tag number of the asset")
+    status = models.CharField(max_length=120, blank=True, null=True, help_text="Current status of the asset during the movement")
+    location = models.CharField(max_length=200, blank=True, null=True, help_text="Current location of the asset")
+    new_location = models.CharField(max_length=200, blank=True, null=True, help_text="New location of the asset after movement")
 
     def __str__(self):
-        return f"Movement of asset {self.assets.serial_number} recorded on {self.date_created}"
+        return f"Movement of asset {self.assets.serial_number} recorded on {self.date_created} destination {self.new_location}"
 
     class Meta:
         verbose_name = 'Asset Movement'
         verbose_name_plural = 'Asset Movements'
         ordering = ['-date_created']  # Orders by most recent movements first
-

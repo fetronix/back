@@ -8,7 +8,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
         }
         .container {
             max-width: 800px;
@@ -23,22 +22,24 @@
         }
         .section-title {
             font-weight: bold;
-            font-size: 20px;
-            margin-top: 20px;
+            font-size: 10px;
+            margin-top: 10px;
             margin-bottom: 10px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         th, td {
             border: 1px solid black;
             padding: 8px;
             text-align: center;
+            font-size:9px;
         }
         th {
             font-weight: bold;
+            font-size:9px;
         }
         .signature-pad {
             border: 1px solid black;
@@ -46,7 +47,7 @@
             margin-top: 10px;
         }
         .instructions {
-            margin-bottom: 20px;
+            margin-bottom: 5px;
         }
         input[type="text"], input[type="date"], textarea {
             width: 100%;
@@ -68,11 +69,10 @@
             margin: 10px 0;
         }
 
-        .footer img {
-            width: 200px;
-            height: 200px;
-            margin-top: 20px;
-        }
+        {% comment %} .footer img {
+            width: 100px;
+            height: 100px;
+        } {% endcomment %}
 
         /* Styling the submit button */
         .footer button {
@@ -92,6 +92,12 @@
         .footer button:hover {
             background-color: #800080; /* Purple background on hover */
             color: white; /* White text on hover */
+        }
+
+        /* Signature image styling */
+        .signature-image {
+            width: 150px; /* Smaller width for signature */
+            height: auto; /* Maintain aspect ratio */
         }
     </style>
 </head>
@@ -115,33 +121,30 @@
             <tr>
                 <th>1. Name & Date:</th>
                 <th>2. Organization:</th>
-                <th>3. Location:</th>
+                <th>3 Location:</th>
                 <th>4. Signature:</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>
-                    <input type="text" placeholder="Enter Name">
-                    <input type="date">
+                    {{ checkout.user.first_name }} {{ checkout.user.last_name }}<br>
+                    {{ checkout.checkout_date|date:"F d, Y" }}
                 </td>
                 <td>
-                    <input type="text" value="KENET" disabled>
+                    KENET
                 </td>
+                {% for cart_item in checkout.cart_items.all %}
+                    {% if forloop.first %}
+                        <td>{{ cart_item.asset.location }}</td>
+                    {% endif %}
+                {% endfor %}
                 <td>
-                    <input type="text" placeholder="Current Location">
-                    <input type="text" placeholder="New Location">
-                </td>
-                <td>
-                    <div class="signature-pad">
-                        <!-- Placeholder for the signature pad -->
-                        [Signature Pad Placeholder]
-                    </div>
+                    <img src="{{ checkout.get_user_signature_url }}" alt="Signature" class="signature-image" />
                 </td>
             </tr>
         </tbody>
     </table>
-    
 
     <h2 class="section-title">Property Description</h2>
     <table>
@@ -151,14 +154,22 @@
             <th>Quantity Issued</th>
             <th>Serial Number</th>
             <th>KENET Tag Number</th>
+            <th>Destination Location</th>
         </tr>
-        <tr>
-            <td><textarea placeholder="Description"></textarea></td>
-            <td><input type="text" placeholder="Quantity Required"></td>
-            <td><input type="text" placeholder="Quantity Issued"></td>
-            <td><input type="text" placeholder="Serial Number"></td>
-            <td><input type="text" placeholder="KENET Tag Number"></td>
-        </tr>
+        {% for cart_item in checkout.cart_items.all %}
+            <tr>
+                <td>{{ cart_item.asset.asset_description }} - {{ cart_item.asset.asset_description_model }}</td>
+                <td>1</td>
+                <td>1</td>
+                <td>{{ cart_item.asset.serial_number }}</td>
+                <td>{{ cart_item.asset.kenet_tag }}</td>
+                <td>{{ cart_item.asset.going_location }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">No items in cart.</td>
+            </tr>
+        {% endfor %}
     </table>
 
     <h2 class="section-title">Authorizing Signature</h2>
@@ -169,25 +180,46 @@
             <th>Date</th>
         </tr>
         <tr>
-            <td><input type="text" placeholder="Name"></td>
-            <td><div class="signature-pad">[Signature Pad Placeholder]</div></td>
-            <td><input type="date"></td>
+            <td>{{ checkout.verifier_user }}</td>
+            
+            <td>
+                <img src="{{ checkout.get_signature_image_url }}" alt="Signature" class="signature-image" />
+            </td>
+            <td>{{ checkout.checkout_date|date:"F d, Y" }}</td>
         </tr>
     </table>
 
 
-    <!-- Footer Section -->
-    <div class="footer">
-        <p>Version 1.0.0   Reference: KS/ERF</p>
-        <img src="{{ stamp_url }}"  width="200" height="200"  alt="KENET Stamp">
-        <button onclick="printForm()">Print</button>
-    </div>
+   <!-- Footer Section -->
+<div class="footer">
+    <p>Version 1.0.0   Reference: KS/ERF</p>
+    <img src="{% static 'assets/images/kenet_stamp.png' %}" width="200px" height="200px" alt="KENET Stamp">
+    <button id="print_button" onclick="printForm()">Print</button>
+</div>
 
-    <script>
-        function printForm() {
-            window.print();
+<script>
+    function printForm() {
+        // Hide the print button before printing
+        var printButton = document.getElementById("print_button");
+        printButton.style.display = "none"; // Hide the print button
+        
+        // Print the page
+        window.print();
+
+        // Show the print button again after printing
+       // printButton.style.display = "block"; // Make the button visible again after printing
+    }
+</script>
+
+<!-- Add this CSS to hide the button while printing -->
+<style>
+    @media print {
+        #print_button {
+            display: none; /* Hide the print button when printing */
         }
-    </script>
+    }
+</style>
+
 </div>
 </body>
 </html>

@@ -67,6 +67,7 @@
                     <div class="card-body">
                         <h5 class="card-title">User Dispatching: {{ item.user.username }}</h5>
                         <p>Checking Out Date: {{ item.checkout_date }}</p>
+                         <p>admin signature <img  src='{{ item.signature_image.url }}'></p>
                         <hr>
                         <h6>Dispatch Items</h6>
                         {% if item.cart_items.all %}
@@ -92,7 +93,7 @@
                                                 <td>{{ cart_item.asset.status }}</td>
                                                 <td>{{ cart_item.asset.kenet_tag }}</td>
                                                 <td>{{ cart_item.asset.location }}</td>
-                                                <td>{{ cart_item.asset.new_location }}</td>
+                                                <td>{{ cart_item.asset.going_location }}</td>
                                             </tr>
                                         {% empty %}
                                             <tr>
@@ -105,7 +106,8 @@
                         {% else %}
                             <p>No items in cart.</p>
                         {% endif %}
-                        <a href="{{item.checkout_url_link}}" target="_blank" class="btn btn-primary mt-3">{{item.checkout_url_link}}</a>
+                        <a href="{% url 'checkout-detail' pk=item.id %}" target="_blank" class="btn btn-primary mt-3">View Checkout Details</a>
+
                     </div>
                 </div>
             {% endfor %}

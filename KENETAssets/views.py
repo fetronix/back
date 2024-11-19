@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *  
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAdminUser
-
+from django.views.generic import DetailView
 from background_task import background
 from django.http import JsonResponse
 from .tasks import *  # Import your background task
@@ -61,10 +61,57 @@ class DeliveryListView(generics.ListAPIView):
     serializer_class = DeliveryListSerializer
     permission_classes = [IsAuthenticated]  
 
+
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+
+@api_view(['POST'])
+def create_or_update_location(request):
+    location_name = request.data.get('location_name', None)
+    location_alias = request.data.get('location_alias', None)
+
+    if not location_name or not location_alias:
+        return Response({"detail": "Location name and alias are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the location already exists
+    location, created = Location.objects.get_or_create(
+        name=location_name, 
+        name_alias=location_alias
+    )
+
+    # Return appropriate response based on whether the location was created or updated
+    if created:
+        return Response(LocationSerializer(location).data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(LocationSerializer(location).data, status=status.HTTP_200_OK)
+
 class AssetsCreateView(generics.CreateAPIView):
     queryset = Assets.objects.all()
     serializer_class = AssetsSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Ensure authentication
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        # Handle location in assets creation
+        location_data = request.data.get('location', None)
+
+        if location_data:
+            location_name = location_data.get('name', None)
+            location_alias = location_data.get('name_alias', None)
+
+            if location_name and location_alias:
+                location, created = Location.objects.get_or_create(name=location_name, name_alias=location_alias)
+                # Assign the created or existing location to the asset
+                request.data['location'] = location.id
+
+        return super().create(request, *args, **kwargs)
+
+# class AssetsCreateView(generics.CreateAPIView):
+#     queryset = Assets.objects.all()
+#     serializer_class = AssetsSerializer
+#     permission_classes = [permissions.IsAuthenticated]  # Ensure authentication
     
 class AssetNewCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -116,7 +163,30 @@ class SupplierViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
-    
+
+class UserCheckoutSet(viewsets.ModelViewSet):
+    serializer_class = CustomUserCheckoutSerializer
+
+    def get_queryset(self):
+        """
+        Exclude the logged-in user and optionally filter by role.
+        """
+        # Get the logged-in user
+        logged_in_user = self.request.user
+
+        # Get role parameter from query parameters
+        role = self.request.query_params.get('role', None)
+
+        # Base queryset: exclude the logged-in user
+        queryset = CustomUser.objects.exclude(id=logged_in_user.id)
+
+        if role:
+            # Filter by role if provided
+            return queryset.filter(role=role)
+
+        # Default to returning users with 'can_checkout_items' role
+        return queryset.filter(role=UserRoles.CAN_VERIFY_ITEMS)
+
     
 class CartListView(generics.ListAPIView):
     serializer_class = CartSerializer
@@ -124,8 +194,23 @@ class CartListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Cart.objects.filter(user=user)
+        
+        # Optionally, you can call the task here if needed, e.g., for real-time expiration check
+        remove_expired_cart_items(schedule=10)
+        
+        return Cart.objects.filter(user=user, asset__status='pending_release')
+    
+    
 
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from .models import Cart, Assets
+from background_task.models import Task
+from .tasks import remove_expired_cart_items
 
 class AddToCartView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
@@ -142,7 +227,11 @@ class AddToCartView(APIView):
         cart_item = Cart(user=user, asset=asset)
         cart_item.save()
 
+        # Schedule the background task to remove expired cart items
+        # remove_expired_cart_items()  # You can specify the delay as needed
+
         return Response({'message': 'Added to cart'}, status=status.HTTP_201_CREATED)
+
 
 
 class RemoveFromCartView(APIView):
@@ -153,6 +242,13 @@ class RemoveFromCartView(APIView):
         cart_item = get_object_or_404(Cart, id=asset_id)
         
         if cart_item:
+            # Get the asset related to the cart item
+            asset = get_object_or_404(Assets, id=cart_item.asset.id)  # Assuming Cart has a foreign key to Asset
+
+            # Update the asset status to 'instore'
+            asset.status = 'instore'
+            asset.save()
+
             # Remove the item from the cart
             cart_item.delete()
             return Response({'message': 'Removed from Dispatch basket'}, status=status.HTTP_200_OK)
@@ -166,6 +262,12 @@ class CheckoutCreateView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
+        verified_user = request.data.get('verified_user')
+        print("-----------------------------------------------")
+        
+        print(verified_user)
+        
+        print("-----------------------------------------------")
         # Filter cart items based on the status 'pending_release'
         cart_items = Cart.objects.filter(user=user, asset__status='pending_release')
 
@@ -173,25 +275,29 @@ class CheckoutCreateView(APIView):
             return Response({"detail": "No items with status 'pending_release' in your cart."}, status=status.HTTP_400_BAD_REQUEST)
 
         new_location = request.data.get('new_location')
+        
         if not new_location:
             return Response({"detail": "New location is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create a new Checkout for the current user
         checkout = Checkout.objects.create(user=user)
         checkout.cart_items.set(cart_items)
+        
+        v_user = CustomUser.objects.get(username=verified_user)
+        
+        checkout.verifier_user = CustomUser.objects.get(username=verified_user)
+        
         checkout.save()
 
         # Update the status and location of the assets in the cart
         for cart_item in cart_items:
             asset = cart_item.asset
             asset.status = 'pending_approval'  # Update the status
-            asset.new_location = new_location  # Set the new location
+            asset.going_location = new_location  # Set the new location
             asset.save()
 
         serializer = CheckoutSerializer(checkout)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 
 class CheckoutListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated] 
@@ -201,18 +307,42 @@ class CheckoutListView(generics.ListAPIView):
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)  # Show only the user's checkouts
 
-
 class CheckoutAdminListView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated] 
-    queryset = Checkout.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = CheckoutSerializer
 
-from rest_framework.generics import RetrieveAPIView
+    def get_queryset(self):
+        # Get the logged-in user
+        logged_in_user = self.request.user
 
-class CheckoutDetailView(RetrieveAPIView):
-    queryset = Checkout.objects.all()
-    serializer_class = CheckoutSerializer
-    lookup_field = 'id'
+        # Retrieve the first name and last name of the logged-in user
+        user_first_name = logged_in_user.first_name
+        user_last_name = logged_in_user.last_name
+        username = logged_in_user.username
+        usernameid = logged_in_user.id
+
+        # Filter checkouts where the verifier_user matches the logged-in user's first or last name
+        queryset = Checkout.objects.filter(
+            models.Q(verifier_user=usernameid) | models.Q(verifier_user=usernameid)
+        )
+
+        if queryset.exists():
+            return queryset
+        else:
+            # If no matching checkouts exist, return an empty queryset
+            return Checkout.objects.none()
+
+class CheckoutDetailView(DetailView):
+    model = Checkout
+    template_name = 'kenet_release_form.html'  # Create this template for displaying the details
+    context_object_name = 'checkout'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['logo_url'] = '/static/assets/images/logo.png'  # Adding logo URL
+        context['stamp_url'] = '/static/assets/images/kenet_stamp.png'  # Adding stamp URL
+        return context
+
     
 from django.urls import reverse
 from rest_framework import status
@@ -248,7 +378,7 @@ class ApproveCheckoutView(APIView):
                 checkout.checkout_url_link = checkout_url
                 checkout.save()
 
-                save_approved_asset_movements()
+                # save_approved_asset_movements()
 
                 return Response(
                     {
@@ -265,7 +395,6 @@ class ApproveCheckoutView(APIView):
 
         except Checkout.DoesNotExist:
             return Response({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
-
 
 class RejectCheckoutView(APIView):
     permission_classes = [IsAdminUser]  # Only admins can approve checkouts
@@ -311,30 +440,70 @@ class RejectCheckoutView(APIView):
         except Checkout.DoesNotExist:
             return JsonResponse({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
 
-
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from django.utils import timezone
 
 class CheckoutUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Checkout.objects.all()
     serializer_class = CheckoutUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    # def get_queryset(self):
-    #     # Ensure the user can only update their own checkouts
-    #     return Checkout.objects.filter(user=self.request.user)
-    
-    
-    
+    def perform_update(self, serializer):
+        # Save the updated checkout instance
+        checkout = serializer.save()
+        
+        # Iterate through each cart item linked to this checkout
+        for cart_item in checkout.cart_items.all():
+            asset = cart_item.asset
+            
+            # Create an AssetsMovement entry for each asset in the checkout cart
+            AssetsMovement.objects.create(
+                assets=asset,
+                date_created=timezone.now(),
+                person_moving=self.request.user,
+                comments=checkout.remarks,
+                serial_number=asset.serial_number,
+                asset_description = asset.asset_description,
+                asset_description_model = asset.asset_description_model,
+                kenet_tag=asset.kenet_tag,
+                status="onsite",  # Set the movement record status to "onsite"
+                location=asset.location.name if asset.location else None,
+                new_location=asset.going_location,
+            )
+
+            # Update the asset status to "onsite"
+            asset.status = "onsite"
+            asset.save()
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        
+        # Customize the response if needed
+        response.data['message'] = "Checkout updated, asset status set to onsite, and movements recorded"
+        return Response(response.data, status=status.HTTP_200_OK)
+
+class CheckoutUSerUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Checkout.objects.all()
+    serializer_class = CheckoutUserUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+   
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        
+        # Customize the response if needed
+        response.data['message'] = "Checkout updated, asset status set to onsite, and movements recorded"
+        return Response(response.data, status=status.HTTP_200_OK)
+
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 
 def custom_404(request, exception=None):
     return render(request, 'qyfy/404.html', status=404)
 
-
 def custom_505(request, exception=None):
     return render(request, 'qyfy/505.html', status=404)
-
-
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -358,17 +527,12 @@ def login_view(request):
     
     return render(request, 'login.html')
 
-
-
-
 def home_view(request):
     checkouts = Checkout.objects.all()  # Retrieve all checkout records
     return render(request, 'home.html', {
         'user': request.user,
         'checkouts': checkouts  # Pass checkouts to the template
     })
-
-
 
 from django.shortcuts import redirect
 from django.contrib.auth import logout
@@ -380,13 +544,154 @@ def logout_view(request):
     return redirect('login-form')  # Redirect to the login page or home page
 
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 def kenet_release_form_view(request):
-    # You can add context data if needed, for example:
+    # Example checkout object, replace with your logic to get the correct checkout
+    checkout = get_object_or_404(Checkout, id=request.GET.get("id")) 
+
+    # Initialize the variables in case the user is not found
+    authorizing_first_name = "Unknown"
+    authorizing_last_name = "User"
+
+    authorizing_user = CustomUser.objects.get(username=checkout.authorizing_name)
+    authorizing_first_name = authorizing_user.first_name
+    authorizing_last_name = authorizing_user.last_name
+
+    # Add to context
     context = {
+        'checkout': checkout,
         'logo_url': '/static/assets/images/logo.png',
-        'stamp_url': '/static/assets/images/kenet_stamp.png'
-        }
+        'stamp_url': '/static/assets/images/kenet_stamp.png',
+        'authorizing_first_name': authorizing_first_name,
+        'authorizing_last_name': authorizing_last_name,
+    }
     return render(request, 'kenet_release_form.html', context)
+
     
-    # If no additional context is needed, just render the template
-    # return render(request, 'kenet_release_form.html')
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from django.db import transaction
+from .models import Assets, Cart, Checkout
+class ReturnFaultyAssetView(APIView):
+    allowed_methods = ['GET', 'POST', 'PATCH']  # Allow PATCH as well
+    
+    def get(self, request, asset_id, *args, **kwargs):
+        # Fetch and return asset details for GET requests
+        asset = get_object_or_404(Assets, id=asset_id)
+        # Assuming you have a serializer to return the asset data
+        # serializer = AssetSerializer(asset)
+        return Response({"asset_id": asset.id, "status": asset.status}, status=status.HTTP_200_OK)
+    
+    def post(self, request, asset_id, *args, **kwargs):
+        # Mark the asset as faulty and remove it from cart/checkout
+        return self.handle_faulty_asset(request, asset_id)
+    
+    def patch(self, request, asset_id, *args, **kwargs):
+        # Handle partial updates (you can mark as faulty and remove from cart)
+        return self.handle_faulty_asset(request, asset_id)
+    
+    def handle_faulty_asset(self, request, asset_id):
+        try:
+            # Get the asset by ID
+            asset = get_object_or_404(Assets, id=asset_id)
+
+            # Check if the asset's status is already 'faulty'
+            if asset.status == 'faulty':
+                return Response(
+                    {"detail": "Asset is already marked as faulty."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Mark asset status as 'faulty'
+            asset.status = 'faulty'
+
+            # Check if the asset exists in any checkout or cart
+            cart_item = Cart.objects.filter(asset=asset).first()
+            checkout = Checkout.objects.filter(cart_items__asset=asset).first()
+
+            with transaction.atomic():
+                if checkout:
+                    # Remove the asset from the checkout
+                    checkout.cart_items.remove(cart_item)
+                    checkout.save()
+
+                if cart_item:
+                    # Delete the cart item (if not deleted above)
+                    cart_item.delete()
+
+                # Revert `new_location` to null
+                asset.new_location = "UON Store"
+                asset.save()
+
+            return Response(
+                {"detail": "Asset has been marked as faulty and removed from any checkouts or carts."},
+                status=status.HTTP_200_OK
+            )
+
+        except Assets.DoesNotExist:
+            return Response({"detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)
+
+class ReturnDecomissionedAssetView(APIView):
+    allowed_methods = ['GET', 'POST', 'PATCH']  # Allow PATCH as well
+    
+    def get(self, request, asset_id, *args, **kwargs):
+        # Fetch and return asset details for GET requests
+        asset = get_object_or_404(Assets, id=asset_id)
+        # Assuming you have a serializer to return the asset data
+        # serializer = AssetSerializer(asset)
+        return Response({"asset_id": asset.id, "status": asset.status}, status=status.HTTP_200_OK)
+    
+    def post(self, request, asset_id, *args, **kwargs):
+        # Mark the asset as faulty and remove it from cart/checkout
+        return self.handle_faulty_asset(request, asset_id)
+    
+    def patch(self, request, asset_id, *args, **kwargs):
+        # Handle partial updates (you can mark as faulty and remove from cart)
+        return self.handle_faulty_asset(request, asset_id)
+    
+    def handle_faulty_asset(self, request, asset_id):
+        try:
+            # Get the asset by ID
+            asset = get_object_or_404(Assets, id=asset_id)
+
+            # Check if the asset's status is already 'faulty'
+            if asset.status == 'decommissioned':
+                return Response(
+                    {"detail": "Asset is already marked as decommissioned."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Mark asset status as 'faulty'
+            asset.status = 'decommissioned'
+
+            # Check if the asset exists in any checkout or cart
+            cart_item = Cart.objects.filter(asset=asset).first()
+            checkout = Checkout.objects.filter(cart_items__asset=asset).first()
+
+            with transaction.atomic():
+                if checkout:
+                    # Remove the asset from the checkout
+                    checkout.cart_items.remove(cart_item)
+                    checkout.save()
+
+                if cart_item:
+                    # Delete the cart item (if not deleted above)
+                    cart_item.delete()
+
+                # Revert `new_location` to null
+                asset.new_location = "UON Store"
+                asset.save()
+
+            return Response(
+                {"detail": "Asset has been marked as decommissioned and removed from any checkouts or carts."},
+                status=status.HTTP_200_OK
+            )
+
+        except Assets.DoesNotExist:
+            return Response({"detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)

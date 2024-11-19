@@ -1,89 +1,46 @@
 from background_task import background
 from django.utils import timezone
 from datetime import timedelta
-from .models import Cart
-from background_task import background
-from django.utils import timezone
-from datetime import timedelta
 from .models import Cart, Checkout, Assets
-from django.db import transaction
 
-
-@background(schedule=10)  # Run this task every 10 seconds
+# Task 1: Remove expired cart items with 'pending_release' status
+@background(schedule=10)  # You can adjust the schedule time based on your needs
 def remove_expired_cart_items():
     expiration_time = timezone.now() - timedelta(seconds=30)
-
-    # Query all cart items with assets marked as pending_release and older than 30 seconds
+    
     expired_cart_items = Cart.objects.filter(asset__status='pending_release', added_at__lt=expiration_time)
-
-    # Loop through expired cart items and update asset status before deleting the cart item
+    
     for cart_item in expired_cart_items:
-        # Update the asset's status to 'instore'
-        cart_item.asset.status = 'instore'
-        cart_item.asset.save()  # Save the updated asset status
+        # Update asset status to 'instore' before deleting from the cart
+        asset = cart_item.asset
+        asset.status = 'instore'
+        asset.save()
 
-        # Now delete the cart item
+        # Delete the cart item
         cart_item.delete()
 
-        print(f"Removed cart item: {cart_item.asset.serial_number} for user: {cart_item.user.username}")
+        print(f"Removed expired cart item: {asset.serial_number} for user: {cart_item.user.username}")
 
-@background(schedule=10)  # 10-second delay for the task
+# Task 2: Process rejected assets, revert status, and remove from checkout
+@background(schedule=10)  # Adjust the schedule as needed
 def process_rejected_cart_items():
-    # Get all checkout items with rejected assets
     rejected_checkouts = Checkout.objects.filter(cart_items__asset__status='rejected')
 
     for checkout in rejected_checkouts:
-        # For each rejected checkout, get the related cart items
         cart_items = checkout.cart_items.all()
 
         for cart_item in cart_items:
-            # Get the asset linked to the cart item
             asset = cart_item.asset
-
-            # Revert asset's new_location to null and status to 'instore'
             asset.new_location = None
             asset.status = 'instore'
-
-            # Save the asset
             asset.save()
 
-            # Now delete the cart item
+            # Remove the cart item
             cart_item.delete()
+            print(f"Processed rejected cart item: {asset.serial_number}")
 
-            # Optionally, print for debugging
-            print(f"Rejected cart item processed: {asset.serial_number}")
-
-        # After processing all cart items, check if checkout has any cart items left
+        # Delete checkout if no remaining cart items
         if checkout.cart_items.count() == 0:
-            # Only delete the checkout if there are no remaining cart items
             checkout.delete()
 
     print("Rejected cart items have been processed and deleted.")
-
-from background_task import background
-from django.utils import timezone
-from .models import Cart, AssetsMovement, CustomUser, Assets
-
-@background(schedule=10)  # Run every 10 seconds (adjust as needed)
-def save_approved_asset_movements():
-    # Retrieve all cart items where asset status is 'approved' and has not yet been moved
-    approved_cart_items = Cart.objects.filter(asset__status='approved')
-
-    for cart_item in approved_cart_items:
-        asset = cart_item.asset
-
-        # Check if an AssetMovement record already exists for this asset to avoid duplicates
-        if not AssetsMovement.objects.filter(assets=asset).exists():
-            # Create a new AssetMovement record for the approved asset
-            AssetsMovement.objects.create(
-                assets=asset,
-                person_moving=cart_item.user, 
-                # Assuming cart_item has a user who moved the asset
-                comments=f"Automated movement for approved asset {asset.serial_number}"
-            )
-
-            # Optionally update the asset status to 'moved' or another status if needed
-            asset.status = 'onsite'
-            asset.save()
-
-            print(f"Movement record created for asset: {asset.serial_number}")

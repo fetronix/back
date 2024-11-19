@@ -10,6 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'  # You can specify specific fields if needed
+        
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,6 +27,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'first_name','last_name']
+        
+class CustomUserCheckoutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'first_name', 'last_name', 'role']
 
 class AssetsSerializer(serializers.ModelSerializer):
     
@@ -38,8 +44,9 @@ class AssetsSerializer(serializers.ModelSerializer):
             'id', 
             'date_received', 
             'person_receiving', 
-            'asset_description', 
-            'new_location',
+            'asset_description',
+            'asset_description_model', 
+            'going_location',
             'serial_number', 
             'kenet_tag', 
             'location',
@@ -169,17 +176,19 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'asset', 'added_at']
 
 class AssetSerializer(serializers.ModelSerializer):
+    # new_location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
     class Meta:
         model = Assets
-        fields = ['status','new_location']
+        fields = ['status','going_location']
 
     def update(self, instance, validated_data):
         # Handle updating the new location and status
-        instance.new_location = validated_data.get('new_location', instance.new_location)
+        instance.going_location = validated_data.get('new_location', instance.going_location)
         instance.status = validated_data.get('status', instance.status)
         instance.save()
         return instance
-
+    
+    
 class CartDetailSerializer(serializers.ModelSerializer):
     asset = serializers.StringRelatedField()  # Displaying asset as a string
 
@@ -199,7 +208,7 @@ class CheckoutSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Checkout
-        fields = ['id', 'user', 'cart_items', 'checkout_date', 'remarks']
+        fields = ['id', 'user', 'verifier_user','cart_items', 'checkout_date', 'remarks','signature_image','user_signature_image']
 
 
 
@@ -209,12 +218,12 @@ class CheckoutUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Checkout
-        fields = ['remarks', 'signature_image', 'quantity_required', 'quantity_issued', 'authorizing_name']
+        fields = ['remarks', 'signature_image', 'quantity_required', 'quantity_issued', 'verifier_user']
         extra_kwargs = {
             'quantity_required': {'required': False},
             'quantity_issued': {'required': False},
             'remarks': {'required': False},
-            'authorizing_name': {'required': False},
+            'verifier_user': {'required': False},
         }
 
     def update(self, instance, validated_data):
@@ -231,7 +240,30 @@ class CheckoutUpdateSerializer(serializers.ModelSerializer):
         instance.quantity_issued = validated_data.get('quantity_issued', instance.quantity_issued)
 
         # Update authorizing name
-        instance.authorizing_name = validated_data.get('authorizing_name', instance.authorizing_name)
+        instance.verifier_user = validated_data.get('authorizing_name', instance.verifier_user)
 
         instance.save()
         return instance
+    
+    
+
+class CheckoutUserUpdateSerializer(serializers.ModelSerializer):
+    # Field to accept base64 signature data for updating the signature image
+    user_signature_image = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = Checkout
+        fields = ['user_signature_image', ]
+        
+
+    def update(self, instance, validated_data):
+       
+        # Update signature image if signature_base64 is provided
+        user_signature_image = validated_data.get('user_signature_image')
+        if user_signature_image:
+            instance.save_user_signature(user_signature_image)
+
+        instance.save()
+        return instance
+    
+    

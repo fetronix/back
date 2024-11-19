@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Details</title>
+</head>
+<body>
+    <h1>Checkout Details for {{ checkout.user.username }}</h1>
+    
+    <ul>
+        <li>Checkout ID: {{ checkout.id }}</li>
+        <li>Checkout Date: {{ checkout.checkout_date }}</li>
+        <li>Admin Signature: <img src="{{ checkout.signature_image.url }}" alt="Signature" /></li>
+        <li>Checkout URL: <a href="{{ checkout.checkout_url_link }}" target="_blank">{{ checkout.checkout_url_link }}</a></li>
+    </ul>
+
+    <h3>Dispatch Items</h3>
+    {% if checkout.cart_items.all %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Asset Name</th>
+                    <th>Asset Model</th>
+                    <th>Serial Number</th>
+                    <th>Items Status</th>
+                    <th>Kenet Tag</th>
+                    <th>Location Received</th>
+                    <th>Location Going</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cart_item in checkout.cart_items.all %}
+                    <tr>
+                        <td>{{ cart_item.asset.asset_description }}</td>
+                        <td>{{ cart_item.asset.asset_description_model }}</td>
+                        <td>{{ cart_item.asset.serial_number }}</td>
+                        <td>{{ cart_item.asset.status }}</td>
+                        <td>{{ cart_item.asset.kenet_tag }}</td>
+                        <td>{{ cart_item.asset.location }}</td>
+                        <td>{{ cart_item.asset.new_location }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">No items in cart.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No items in cart.</p>
+    {% endif %}
+
+    <a href="{% url 'home' %}" class="btn btn-primary">Back to Home</a>
+</body>
+</html>
