@@ -597,17 +597,21 @@ def create_fixed_asset(request, asset_id):
         if response.status_code == 200:
             asset.sent_to_erp = True
             asset.save()
-            
-            return JsonResponse({"message": "Fixed asset created successfully!"})
+             # Add a success message
+            messages.success(request, f"Fixed asset with Serial Number {asset.serial_number} sent successfully in ERP.")
+            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
         
         
         else:
-            return JsonResponse({"message": "Failed to create fixed asset.", "error": response.text}, status=400)
+            messages.error(request, f"Failed to send fixed asset in ERP. Error: {response.text}")
+            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
 
     except Assets.DoesNotExist:
-        return JsonResponse({"message": "Asset not found."}, status=404)
+        messages.error(request, f"Asset with Serial Number {asset.serial_number} not found.")
+        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
     except Exception as e:
-        return JsonResponse({"message": "Error occurred", "error": str(e)}, status=500)
+        messages.error(request, f"An error occurred while updating asset: {str(e)}")
+        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
 
 
 # Define the view that handles the SOAP request
@@ -671,16 +675,20 @@ def update_fixed_asset(request, asset_id):
             asset.sent_to_erp = True
             asset.save()
             
-            return JsonResponse({"message": "Fixed asset Updated successfully!"})
+            messages.success(request, f"Fixed asset with Serial Number {asset.serial_number} updated successfully in ERP.")
+            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
         
         
         else:
-            return JsonResponse({"message": "Failed to update fixed asset.", "error": response.text}, status=400)
+            messages.error(request, f"Failed to update fixed asset in ERP. Error: {response.text}")
+            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
 
     except Assets.DoesNotExist:
-        return JsonResponse({"message": "Asset not found."}, status=404)
+        messages.error(request, f"Asset with Serial Number {asset.serial_number} not found.")
+        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
     except Exception as e:
-        return JsonResponse({"message": "Error occurred", "error": str(e)}, status=500)
+        messages.error(request, f"An error occurred while updating asset: {str(e)}")
+        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
 
 
 from django.shortcuts import redirect
