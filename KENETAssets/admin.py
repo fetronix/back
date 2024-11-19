@@ -95,7 +95,7 @@ from django.utils.html import format_html
 from .models import AssetsMovement
 
 class AssetsMovementAdmin(admin.ModelAdmin):
-    list_display = ('id', 'asset_description', 'asset_description_model', 'person_moving', 'status', 'location', 'new_location', 'date_created', 'custom_action')
+    list_display = ('id', 'asset_description', 'asset_description_model','serial_number','person_moving', 'status', 'location', 'new_location', 'date_created', 'custom_action')
     list_filter = ('status', 'location', 'new_location', 'date_created')
     search_fields = ('assets__serial_number', 'assets__kenet_tag', 'person_moving__username', 'comments')
 
@@ -111,13 +111,21 @@ class AssetsMovementAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
-    # Custom button that does nothing
     def custom_action(self, obj):
-        return format_html(
-            '<button class="ui blue button" type="button">Send to E.R.P</button>'
-        )
+        # If the asset has already been sent to ERP, show a green button with a new label
+        if obj.sent_to_erp:
+            return format_html(
+                '<button class="ui red button" type="button" disabled>Data Updated on ERP</button>'
+            )
+        else:
+            # Otherwise, show the normal "Send to ERP" button
+            url = reverse('update_fixed_asset', args=[obj.pk])  # URL for the ERP creation view
+            return format_html(
+                '<a href="{0}" class="ui blue button" type="button">Update on E.R.P</a>',
+                url
+            )
 
-    custom_action.short_description = 'Send to E.R.P'
+    custom_action.short_description = 'Update on E.R.P'
     custom_action.allow_tags = True
 
 # Register the customized admin view

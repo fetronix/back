@@ -266,6 +266,7 @@ class AssetsMovement(models.Model):
     status = models.CharField(max_length=120, blank=True, null=True, help_text="Current status of the asset during the movement")
     location = models.CharField(max_length=200, blank=True, null=True, help_text="Current location of the asset")
     new_location = models.CharField(max_length=200, blank=True, null=True, help_text="New location of the asset after movement")
+    sent_to_erp = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Movement of asset {self.assets.serial_number} recorded on {self.date_created} destination {self.new_location}"

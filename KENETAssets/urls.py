@@ -54,5 +54,6 @@ urlpatterns = [
     
     # Moving datat to erp 
     path('create-fixed-asset/<int:asset_id>/', create_fixed_asset, name='create_fixed_asset'),
+    path('update-fixed-asset/<int:asset_id>/', update_fixed_asset, name='update_fixed_asset'),
     
 ]
