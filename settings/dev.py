@@ -24,6 +24,10 @@ SECRET_KEY = 'django-insecure-l^2s*xig=m^-zl)fk8eukp4qse+fn6c$f4vsc6fhd=+4ocvel(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+
+
+
+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -157,6 +161,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # )
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -173,8 +178,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Additional static files
     # You can add more directories here
 ]
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'  # Media settings
+MEDIA_URL = '/devmedia/'
+MEDIA_ROOT = BASE_DIR / 'devmedia'  # Media settings
 
 
 
