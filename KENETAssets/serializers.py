@@ -46,7 +46,7 @@ class AssetsSerializer(serializers.ModelSerializer):
             'person_receiving', 
             'asset_description',
             'asset_description_model', 
-            'going_location',
+            'destination_location',
             'serial_number', 
             'kenet_tag', 
             'location',
@@ -179,11 +179,11 @@ class AssetSerializer(serializers.ModelSerializer):
     # new_location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
     class Meta:
         model = Assets
-        fields = ['status','going_location']
+        fields = ['status','destination_location']
 
     def update(self, instance, validated_data):
         # Handle updating the new location and status
-        instance.going_location = validated_data.get('new_location', instance.going_location)
+        instance.destination_location = validated_data.get('new_location', instance.destination_location)
         instance.status = validated_data.get('status', instance.status)
         instance.save()
         return instance

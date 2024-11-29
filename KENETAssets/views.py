@@ -1,22 +1,29 @@
 from rest_framework.views import APIView
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import viewsets,status, generics, permissions
 from .models import *
-from rest_framework import generics, permissions
-from rest_framework.permissions import IsAuthenticated  # You can use any permission class
-from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *  
-from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAdminUser
 from django.views.generic import DetailView
 from background_task import background
 from django.http import JsonResponse
-from .tasks import *  # Import your background task
-
-
+from django.contrib.auth import logout
+from django.contrib import messages
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from background_task.models import Task
+from .tasks import process_rejected_cart_items, remove_expired_cart_items
+from django.urls import reverse
+from django.db import transaction
+from django.utils import timezone
+from django.http import HttpResponseNotFound,HttpResponse
+from django.shortcuts import render, redirect,get_object_or_404
+from django.contrib.auth import authenticate, login
+import requests
+from requests.auth import HTTPBasicAuth
+from rest_framework.filters import SearchFilter
+from rest_framework import viewsets, filters, status
 
 class LoginView(APIView):
     permission_classes = [AllowAny]  # Allow any user to access this view
@@ -62,12 +69,6 @@ class DeliveryListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]  
 
 
-
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-
-
 @api_view(['POST'])
 def create_or_update_location(request):
     location_name = request.data.get('location_name', None)
@@ -108,11 +109,6 @@ class AssetsCreateView(generics.CreateAPIView):
 
         return super().create(request, *args, **kwargs)
 
-# class AssetsCreateView(generics.CreateAPIView):
-#     queryset = Assets.objects.all()
-#     serializer_class = AssetsSerializer
-#     permission_classes = [permissions.IsAuthenticated]  # Ensure authentication
-    
 class AssetNewCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request, *args, **kwargs):
@@ -146,10 +142,13 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer # Ensure only authenticated users can access
 
+
+
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
-    serializer_class = LocationSerializer # Ensure only authenticated users 
-    
+    serializer_class = LocationSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'name_alias']
 
 class DeliveryViewSet(viewsets.ModelViewSet):
     queryset = Delivery.objects.all()
@@ -196,21 +195,10 @@ class CartListView(generics.ListAPIView):
         user = self.request.user
         
         # Optionally, you can call the task here if needed, e.g., for real-time expiration check
-        remove_expired_cart_items(schedule=10)
+        remove_expired_cart_items(schedule=60)
         
         return Cart.objects.filter(user=user, asset__status='pending_release')
     
-    
-
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-from .models import Cart, Assets
-from background_task.models import Task
-from .tasks import remove_expired_cart_items
 
 class AddToCartView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
@@ -275,6 +263,7 @@ class CheckoutCreateView(APIView):
             return Response({"detail": "No items with status 'pending_release' in your cart."}, status=status.HTTP_400_BAD_REQUEST)
 
         new_location = request.data.get('new_location')
+        new_location1 = Location.objects.get(name=new_location)
         
         if not new_location:
             return Response({"detail": "New location is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -293,7 +282,7 @@ class CheckoutCreateView(APIView):
         for cart_item in cart_items:
             asset = cart_item.asset
             asset.status = 'pending_approval'  # Update the status
-            asset.going_location = new_location  # Set the new location
+            asset.destination_location = new_location1  # Set the new location
             asset.save()
 
         serializer = CheckoutSerializer(checkout)
@@ -344,13 +333,6 @@ class CheckoutDetailView(DetailView):
         return context
 
     
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.permissions import IsAdminUser
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import Checkout
-
 class ApproveCheckoutView(APIView):
     permission_classes = [IsAdminUser]
 
@@ -440,9 +422,7 @@ class RejectCheckoutView(APIView):
         except Checkout.DoesNotExist:
             return JsonResponse({"detail": "Checkout not found."}, status=status.HTTP_404_NOT_FOUND)
 
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-from django.utils import timezone
+
 
 class CheckoutUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Checkout.objects.all()
@@ -469,7 +449,7 @@ class CheckoutUpdateView(generics.RetrieveUpdateAPIView):
                 kenet_tag=asset.kenet_tag,
                 status="onsite",  # Set the movement record status to "onsite"
                 location=asset.location.name if asset.location else None,
-                new_location=asset.going_location,
+                new_location=asset.destination_location,
             )
 
             # Update the asset status to "onsite"
@@ -496,8 +476,6 @@ class CheckoutUSerUpdateView(generics.RetrieveUpdateAPIView):
         response.data['message'] = "Checkout updated, asset status set to onsite, and movements recorded"
         return Response(response.data, status=status.HTTP_200_OK)
 
-from django.http import HttpResponseNotFound
-from django.shortcuts import render
 
 def custom_404(request, exception=None):
     return render(request, 'qyfy/404.html', status=404)
@@ -505,10 +483,6 @@ def custom_404(request, exception=None):
 def custom_505(request, exception=None):
     return render(request, 'qyfy/505.html', status=404)
 
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
-from django.contrib import messages
 
 def login_view(request):
     if request.method == 'POST':
@@ -535,165 +509,10 @@ def home_view(request):
     })
     
 
-import requests
-from requests.auth import HTTPBasicAuth
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import Assets
-
-# Define the view that handles the SOAP request
-def create_fixed_asset(request, asset_id):
-    try:
-        # Fetch the asset using the provided asset_id
-        asset = Assets.objects.get(id=asset_id)
-
-        # Prepare asset data (you can add more fields as per your requirements)
-        asset_data = {
-            'Description': asset.asset_description,
-            'FA_Class_Code': 'TANGIBLE',  # This might come from another model or hardcoded
-            'FA_Subclass_Code': 'NET-EQUIP',  # Similarly, this can be dynamic
-            'Tag_Number': asset.kenet_tag,
-            'Serial_No': asset.serial_number,
-        }
-
-        # SOAP request body (replace with dynamic fields as required)
-        soap_body = f"""
-        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-            <s:Body>
-                <Create xmlns="urn:microsoft-dynamics-schemas/page/fixedassetcard">
-                    <FixedAssetCard>
-                        <Description>{asset_data['Description']}</Description>
-                        <FA_Class_Code>{asset_data['FA_Class_Code']}</FA_Class_Code>
-                        <FA_Subclass_Code>{asset_data['FA_Subclass_Code']}</FA_Subclass_Code>
-                        <Tag_Number>{asset_data['Tag_Number']}</Tag_Number>
-                        <Serial_No>{asset_data['Serial_No']}</Serial_No>
-                    </FixedAssetCard>
-                </Create>
-            </s:Body>
-        </s:Envelope>
-        """
-
-        # Define the SOAP endpoint and authentication details
-        soap_url = "http://a01-test.erp.kenet.or.ke:7047/BC190/WS/KENET%20LIVE/Page/FixedAssetCard"
-        username = 'GLUORA'
-        password = 'GOL@#k3n3t?!!'
 
 
-        # SOAP headers
-        headers = {
-            "Content-Type": "text/xml; charset=utf-8",
-            "SOAPAction": "urn:microsoft-dynamics-schemas/page/fixedassetcard:Create"
-        }
-
-        # Send the SOAP request
-        response = requests.post(
-            soap_url,
-            data=soap_body,
-            headers=headers,
-            auth=HTTPBasicAuth(username, password)
-        )
-
-        # Check the response status
-        if response.status_code == 200:
-            asset.sent_to_erp = True
-            asset.save()
-             # Add a success message
-            messages.success(request, f"Fixed asset with Serial Number {asset.serial_number} sent successfully in ERP.")
-            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
-        
-        
-        else:
-            messages.error(request, f"Failed to send fixed asset in ERP. Error: {response.text}")
-            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
-
-    except Assets.DoesNotExist:
-        messages.error(request, f"Asset with Serial Number {asset.serial_number} not found.")
-        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
-    except Exception as e:
-        messages.error(request, f"An error occurred while updating asset: {str(e)}")
-        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assets/')
 
 
-# Define the view that handles the SOAP request
-def update_fixed_asset(request, asset_id):
-    try:
-        # Fetch the asset using the provided asset_id
-        asset = AssetsMovement.objects.get(id=asset_id)
-        
-        
-        print(asset)
-
-        # Prepare asset data (you can add more fields as per your requirements)
-        asset_data = {
-            'Description': asset.asset_description,
-            'FA_Class_Code': 'TANGIBLE',  # This might come from another model or hardcoded
-            'FA_Subclass_Code': 'NET-EQUIP',  # Similarly, this can be dynamic
-            'Tag_Number': asset.kenet_tag,
-            'Serial_No': asset.serial_number,
-        }
-
-        # SOAP request body (replace with dynamic fields as required)
-        soap_body = f"""
-        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
-            <s:Body>
-                <Create xmlns="urn:microsoft-dynamics-schemas/page/fixedassetcard">
-                    <FixedAssetCard>
-                        <Description>{asset_data['Description']}</Description>
-                        <FA_Class_Code>{asset_data['FA_Class_Code']}</FA_Class_Code>
-                        <FA_Subclass_Code>{asset_data['FA_Subclass_Code']}</FA_Subclass_Code>
-                        <Tag_Number>{asset_data['Tag_Number']}</Tag_Number>
-                        <Serial_No>{asset_data['Serial_No']}</Serial_No>
-                        <FA_Location_Code>AGHAKAN-UN</FA_Location_Code>
-                    </FixedAssetCard>
-                </Create>
-            </s:Body>
-        </s:Envelope>
-        """
-
-        # Define the SOAP endpoint and authentication details
-        soap_url = "http://a01-test.erp.kenet.or.ke:7047/BC190/WS/KENET%20LIVE/Page/FixedAssetCard"
-        username = 'GLUORA'
-        password = 'GOL@#k3n3t?!!'
-
-
-        # SOAP headers
-        headers = {
-            "Content-Type": "text/xml; charset=utf-8",
-            "SOAPAction": "urn:microsoft-dynamics-schemas/page/fixedassetcard:Update"
-        }
-
-        # Send the SOAP request
-        response = requests.post(
-            soap_url,
-            data=soap_body,
-            headers=headers,
-            auth=HTTPBasicAuth(username, password)
-        )
-
-        # Check the response status
-        if response.status_code == 200:
-            asset.sent_to_erp = True
-            asset.save()
-            
-            messages.success(request, f"Fixed asset with Serial Number {asset.serial_number} updated successfully in ERP.")
-            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
-        
-        
-        else:
-            messages.error(request, f"Failed to update fixed asset in ERP. Error: {response.text}")
-            return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
-
-    except Assets.DoesNotExist:
-        messages.error(request, f"Asset with Serial Number {asset.serial_number} not found.")
-        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
-    except Exception as e:
-        messages.error(request, f"An error occurred while updating asset: {str(e)}")
-        return redirect('http://197.136.16.164:8000/admin/KENETAssets/assetsmovement/')
-
-
-from django.shortcuts import redirect
-from django.contrib.auth import logout
-from django.contrib import messages
 
 def logout_view(request):
     logout(request)
@@ -729,12 +548,7 @@ def kenet_release_form_view(request):
     return render(request, 'kenet_release_form.html', context)
 
     
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-from django.db import transaction
-from .models import Assets, Cart, Checkout
+
 class ReturnFaultyAssetView(APIView):
     allowed_methods = ['GET', 'POST', 'PATCH']  # Allow PATCH as well
     
@@ -767,6 +581,20 @@ class ReturnFaultyAssetView(APIView):
 
             # Mark asset status as 'faulty'
             asset.status = 'faulty'
+            
+            AssetsMovement.objects.create(
+                assets=asset,
+                date_created=timezone.now(),
+                person_moving=self.request.user,
+                comments=checkout.remarks,
+                serial_number=asset.serial_number,
+                asset_description = asset.asset_description,
+                asset_description_model = asset.asset_description_model,
+                kenet_tag=asset.kenet_tag,
+                status=asset.status,  # Set the movement record status to "onsite"
+                location=asset.location.name if asset.location else None,
+                new_location="UON Store"
+            )
 
             # Check if the asset exists in any checkout or cart
             cart_item = Cart.objects.filter(asset=asset).first()
@@ -826,6 +654,20 @@ class ReturnDecomissionedAssetView(APIView):
 
             # Mark asset status as 'faulty'
             asset.status = 'decommissioned'
+            
+            AssetsMovement.objects.create(
+                assets=asset,
+                date_created=timezone.now(),
+                person_moving=self.request.user,
+                comments=checkout.remarks,
+                serial_number=asset.serial_number,
+                asset_description = asset.asset_description,
+                asset_description_model = asset.asset_description_model,
+                kenet_tag=asset.kenet_tag,
+                status=asset.status,  # Set the movement record status to "onsite"
+                location=asset.location.name if asset.location else None,
+                new_location="UON Store"
+            )
 
             # Check if the asset exists in any checkout or cart
             cart_item = Cart.objects.filter(asset=asset).first()
@@ -842,7 +684,7 @@ class ReturnDecomissionedAssetView(APIView):
                     cart_item.delete()
 
                 # Revert `new_location` to null
-                asset.new_location = "UON Store"
+                asset.destination_location = None
                 asset.save()
 
             return Response(

@@ -55,13 +55,28 @@ class Suppliers(models.Model):
 
 
 class Delivery(models.Model):
+    STATUS_CHOICES = [
+        ('noc', 'NOC'),
+        ('netdev', 'NetDev'),
+        ('bolt', 'BOLT'),
+        ('dci', 'DCI'),
+        ('data_centre_infrastructure', 'Data Centre Infrastructure'),
+        
+    ]
+    
     supplier_name = models.ForeignKey(Suppliers, on_delete=models.CASCADE, related_name='primary_suppliers', blank=True, null=True)
     quantity = models.PositiveIntegerField()
     date_delivered = models.DateField(auto_now_add=True)
     person_receiving = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, help_text="User who received the asset")
     invoice_file = models.FileField(upload_to='invoices/', null=True, blank=True)
     invoice_number = models.CharField(max_length=100,null=True,blank=True)
-    project = models.CharField(max_length=255)
+    project = models.CharField(
+        max_length=100,
+        choices=STATUS_CHOICES,
+        default='noc',
+        blank=True,
+        null=True
+    )
     comments = models.TextField(blank=True)
     delivery_id = models.CharField(max_length=10, unique=True, editable=False, blank=True)  # SLK ID field
     
@@ -135,10 +150,9 @@ class Assets(models.Model):
     asset_description_model = models.CharField(max_length=100, null=True, blank=True)
     serial_number = models.CharField(max_length=100, unique=True)
     kenet_tag = models.CharField(max_length=100, unique=True)
-    going_location = models.CharField(max_length=100, null=True,blank=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
     sent_to_erp = models.BooleanField(default=False)
-    # going_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='going_location', blank=True, null=True)
+    destination_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='going_location', blank=True, null=True)
     
     
     status = models.CharField(
@@ -153,7 +167,7 @@ class Assets(models.Model):
     delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True, blank=True, related_name='assets', help_text="Associated delivery for this asset")
 
     def __str__(self):
-        return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id}) ({self.going_location})"
+        return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id}) ({self.destination_location})"
 
     class Meta:
         verbose_name = 'Asset'
@@ -167,7 +181,7 @@ class Cart(models.Model):
     added_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.asset.serial_number}- {self.asset.status}- {self.asset.kenet_tag}- {self.asset.location}- {self.asset.id}- {self.asset.going_location}- {self.added_at}"
+        return f"{self.user.username} - {self.asset.serial_number}- {self.asset.status}- {self.asset.kenet_tag}- {self.asset.location}- {self.asset.id}- {self.asset.destination_location}- {self.added_at}"
 
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
@@ -265,6 +279,7 @@ class AssetsMovement(models.Model):
     kenet_tag = models.CharField(max_length=100, blank=True, null=True, help_text="The KENET tag number of the asset")
     status = models.CharField(max_length=120, blank=True, null=True, help_text="Current status of the asset during the movement")
     location = models.CharField(max_length=200, blank=True, null=True, help_text="Current location of the asset")
+    # location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
     new_location = models.CharField(max_length=200, blank=True, null=True, help_text="New location of the asset after movement")
     sent_to_erp = models.BooleanField(default=False)
 
