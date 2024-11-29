@@ -86,10 +86,15 @@
                         <td>{{ asset.status }}</td>
                         <td>{{ asset.category }}</td>
                         <td>{{ asset.date_received }}</td>
-                        <td>
-                            <!-- Button to View Details -->
+                       <td>
+                        {% if asset.sent_to_erp %}
+                        <!-- Disabled Button for Sent Assets -->
+                        <button class="btn btn-success" disabled>Data Sent to ERP</button>
+                        {% else %}
+                            <!-- Active Button for Unsynced Assets -->
                             <a href="{% url 'create_fixed_asset' asset.id %}" class="btn btn-primary">Send To ERP</a>
-                        </td>
+                        {% endif %}
+                        </td> 
                     </tr>
                 {% empty %}
                     <tr>
