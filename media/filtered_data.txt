@@ -1,0 +1,734 @@
+ACC-TVET , TVET CDACC
+ADMI-CAXTO , Africa Digital Media Institute - Caxtone
+ADMI-IM , Africa Digital Media Institute - IM (ADMI-IM)
+AGHAKAN-UN , Agha Khan University
+AGHS , Alliance Girls High School
+AGU-CENTER , Aga Khan University - Center
+AGU-MAIN , Aga Khan University - Main
+AGU-MUTHIT , Aga Khan University - Muthithi (Diagnostics)
+AGU-N.SCH , Aga Khan University - School of Nursing
+AGU-PEPONI , Aga Khan University - Peponi
+AHS , Alliance High Schol
+AICD , African Institute for capacity Development
+AICKHM , AIC Kijabe Hospital - Marira
+AICKHMAIMA , AIC Kijabe Maimahiu
+AICKH-MN , AIC Kijabe Hospital - Main
+AICKH-NRB , AIC Kijabe Hospital - Nairobi
+AICKH-RVA , Rift Valley Academy - AIC Kijabe Hospital
+AIRC , Agricultural Information Resource Centre
+AIU-NEGST , Africa International University (NEGST)
+ALLIANCEBO , Alliance boys high school
+ALUPE-UNV , Alupe University 
+AMPATH KIT , AMPATH Kitale site 1
+AMPATH-ACT , AMPATH ACTG
+AMPATH-BUN , Bungoma
+AMPATH-DTW , AMPATH Daima Towers
+AMPATH-ELD , AMPATH Eldoret
+AMPATH-KAK , Ampath Kakamega
+AMPATH-KIS , AMPATH Kisumu
+AMPATH-KIT , AMPATH Kitale Site 2
+AMPATH-KSM , Academic Model Providing Access to Healthcare (AMP
+AMPATH-MTR , AMPATH <>MTRH
+ASB-TTC , Asumbi TTC
+ATTC-ABERD , Aberdare Teachers Training College
+AUA , Adventist University of Africa
+BIHC , Boma International Hospitality College
+BNTVC-BUNG , Bungoma North Technical and Vocational College
+BOMET-TEL , Bomet Telephone House
+BSC-BROGLI , Broglio Space Centre
+BSC-BROLIO , Broglio Space Centre
+BTTC-BONDO , Bondo Teachers Training College 
+BTTC-BORAB , Borabu Teachers Training College 
+BTTI , Bureti TTI
+BTTI-BURET , Bureti TTI
+BTTI-BUSHI , Bushiangala Technical Training Institute 
+BTVC-BUTE , Butere Technical and Vocational College
+BUC-BOMET , Bomet University College
+BUKURA , Bukura Agricultural College
+BUKURA-AGR , Bukura Agricultural College
+CARLILE-CO , Carlile College
+CATH-NRB , Catholic University Nairobi Campus
+CATH-POP , Catholic POP
+CATH-UOE , Catholic University Eldoret Campus
+CDC-KSM , CDC KISUMU
+CEMASTEA , Centre for Mathematics, Scie, & Techy Edu in Afric
+CHAMASIRI , Chamasiri TVC
+CHEPKOILEL , CHEPKOILEL UNIVERSITY COLLEGE
+CHUKA-CHOG , CHUKA Chogoria
+CHUKA-EMBU , Chuka University - Embu
+CHUKA-IGEM , Chuka University -Igembe
+CHUKA-M , Chuka University, Main Campus
+CHUKA-MNC , Chuka University, Main Campus
+CHUKA-NRB , Chuka University - Nairobi 
+CHUKA-UNIV , Chuka University
+CHVK-KPLC , Chavakali KPLC <> NOFBI Interception Point
+CHVK-SUBST , Chavakali SubStation
+CITC , Christian Industrial Training Centre 
+CIT-MAIN , Coast Institute of Technology - Main
+CIT-TWN , Coast Institute of Technology - Town
+CMH , consollata mathari hospital
+CORNELIUS , Cornelius Achiki
+CUEA-DATA , KENET CUEA Data Centre
+CUEA-ELD , Catholic University Of Eastern Africa - Eldoret
+CUEA-KITCH , KENET CUEA Kitchen
+CUEA-MNC , Catholic University Of Eastern Africa - Main
+CUEA-OFFIC , KENET CUEA Office
+CUE-COMMIS , Commission for University Education
+CUK-KAREN , The Co-operative University of Kenya - Karen
+CUK-NRB , The Co-operative University of Kenya - Nairobi
+DAYSTA-ATH , Daystar University - ATHI RIVER
+DAYSTA-MKS , Daystar Athi River<> Machakos  TH
+DAYSTA-NRB , Daystar University - Nairobi Campus
+DAYSTAR-M , Daystar Athi River <> Machakos TH
+DCHE , Defence School Higher Education
+DEFTEC , Defence Forces Technical College (DEFTEC)
+DEKUT , DeKUT <>Nyeri TH
+DF-MTC , Defence Forces MTC
+DFTC , Defence Forces Training College
+DKMC , Dedan Kimathi Main Campus
+DKUT-CONSO , Dedan Kimathi University of Technology -MN Consola
+DKUT-KARAT , Dedan Kimathi University of Technology -MN Karatin
+DKUT-NRB , Dedan Kimathi University of Technology - Nairobi C
+DMB-TVC , David Mbiti tvc
+DR.ALICE , Dr.Alice Njuguna
+DS-KAREN , Defence Staff - Karen
+DUNCAN , Duncan Oguta
+DWTVC , David Wambuli TVC
+EASA , East Africa School of Aviation
+ECI , Eldoret Cancer Institute
+EGER-BONTA , Egerton University - Bontana
+EGER-CHS , Egerton University - CHS
+EGER-N , Egerton Njoro <> Egerton Town
+EGER-NDUL , Egerton University -Njoro, MN Campus(To NDU Lanet)
+EGER-NKR , Egerton University - Nakuru Town
+EGER-T , Egerton Town <>Nakuru TH
+EGERTON , EGERTON UNIVERSITY - NJORO
+EGERTON HS , Egerton school of health sciences
+EGERTON MN , Egerton Main Campus
+EKERUBO , Ekerubo geitai TTI
+ELDORET PO , Eldoret PoP
+ELIZABETH , Elizabeth Ndungu
+EMBU TH , Embu Level 5 Hospital
+EMBU UNIV , Embu university<>Embu NOFBI junction
+EMBU-TEL , Embu Telephone House
+EMBU-U , University of Embu
+EREGI TTC , Eregi TTC
+FCK , Friends College Kaimosi
+FCK-KAIMOS , Friends College Kaimosi
+GARISSA-SC , GARISSA SCHOOL
+GRETSA-UNV , GRETSA University 
+GRSU , Garissa University
+HELB , Higher Education Loans Board
+HILLARY , Hillary Cheserek
+HJFMRII-KS , HJF Medical Research International Inc - Kisumu
+HJFMRII-NR , HJF Medical Research International Inc - Nairobi
+HUC-IPSIR , Hekima University College - IPSIR
+HUC-JST , Hekima University College - JST
+ICIPE , The International Centre of Insect Physiology & Ec
+ICRAF , The World Agroforestry Centre (ICRAF)
+ICT CHIROM , ICT Chiromo Campus
+ILRI-KAPIT , ILRI Kapiti
+ILRI-MAIN , International Livestock Research Institution (ILRI
+INDIANA-UN , Indiana University - ELdoret
+ITIATI-HIL , ITIATI HILLS BS
+JAFERY-MSA , Jaffrey Education Centre - Mombasa
+JAFERY-NRB , Jaffery Nairobi
+JEREMIAH , Jeremiah Kioko
+JEZREEL , Jezreel Nyange
+JKUAT , Jomo Kenyatta University of Agriculture and Techno
+JKUAT-CBD , JKUAT CBD
+JKUAT-ELD , JKUAT Eldoret
+JKUAT-K , Jomo Kenyatta University-Kitale
+JKUAT-KARE , JKUAT Karen
+JKUAT-KISI , JKUAT Kisii
+JKUAT-KITA , JKUAT, Kitale
+JKUAT-KKM , JKUAT Kakamega
+JKUAT-M , JKUAT Main <> Thika TH
+JKUAT-MN , Jomo Kenyatta University of Agriculture and Techno
+JKUAT-MSA , JKUAT Mombasa
+JKUAT-NKR , JKUAT Nakuru
+JKUAT-THIK , JKUAT Main <> Thika TH
+JOLEMAC , JOLEMAC Offices
+JOO-UNIV , Jaramogi Oginga Odinga University
+JOOUST , JOOUST
+JOY OTUYA , JOY OTUYA
+JWC , Joint Warfare College
+KABARAK-EG , Kabarak Main <>Egerton TC
+KABARAK-MN , Kabarak University - Main
+KABARAK-NK , Kabarak University Nakuru town
+KABARAK-TW , Kabarak, Town Campus
+KABIANGA , Kabianga University
+KABIANGA-K , Kabianga University<>Kericho-Kisii NOFBI junction
+KAB-U , Kabianga University
+KAC , Kamagambo Adventist College
+KAGUMO-COL , Kagumo College
+KAIMOSI , Kaimosi Girls High  School
+KAKAMEG-TH , Kakamega TH
+KALRO-MAIN , Kenya Agricultural and Livestock Research Organisa
+KALRO-NJOR , Kenya Agricultural and Livestock Research Organisa
+KAMBURU SS , Kamburu Substation KPLC
+KARAT-ITIA , Karatina Itiati Campus
+KARAT-KTWN , Karatina University - Karatina Town
+KARAT-MN , Karatina University - Main
+KARAT-RIV , Karatina Riverbank Campus
+KARAT-TWN , Karatina University, town campus
+KAREN-BLIX , Karen Blixen
+KASARANI , KASARANI
+KBC , KBC
+KCA-KISUMU , KCA UNIVERSITY, KISUMU
+KCA-KITENG , KCA University - Kitengela
+KCA-MAIN , KCA University - Main
+KCA-MTWNC , KCA University - Monrovia Town Campus
+KCOAST-PLY , Kenya Coast Polytechnic
+KDTTC-SYOM , Kibabii Diploma Teachers Training College - Syombe
+KDTTC-TUUT , Kibabii Diploma Teachers Training College - Tuuti
+KEFRI-GRSA , KEFRI Garissa
+KEFRI-KARU , KEFRI KARURA
+KEFRI-KBWZ , KEFRI Kibwezi
+KEFRI-KITU , KEFRI Kitui
+KEFRI-KKMG , KEFRI Kakamega
+KEFRI-KWBZ , KEFRI Kibwezi
+KEFRI-LAMU , KEFRI Lamu
+KEFRI-LODW , KEFRI Lodwar
+KEFRI-LOND , KEFRI Londiani
+KEFRI-MARG , KEFRI Marigat
+KEFRI-MGGA , KEFRI Muguga
+KEFRI-MGRI , KEFRI Migori
+KEFRI-MSN , KEFRI Maseno
+KEFRI-NYER , KEFRI Nyeri
+KEFRI-RMRT , KEFRI Rumuruti
+KEFRI-TURB , KEFRI Turbo
+KEMI , Kenya Education Management Institute 
+KEMRI RCTP , KEMRI RCTP
+KEMRI_MTWP , Kenya Medical Research Institute - Mtwapa
+KEMRI-KIRI , KEMRI Kirinyaga
+KEMRI-MALI , KEMRI MALINDI
+KEMU-MERU , KeMU Meru <> Meru TH
+KEMU-MNPOP , Kenya Methodist University - Main (KEMU POP)
+KEMU-MSA , Kenya Methodist University - Mombasa
+KEMU-NRB , Kenya Methodist University - Nairobi
+KEMU-TWN , Kenya Methodist University - Town
+KEMU-TWRS , Kenya Methodist University - Towers
+KENET , KENET
+KENET MOJI , KENET MIlimani (M. Ojiambo)
+KENET USIU , KENET USIU Office
+KENET-ADM , KENET Secretariat Admini Office
+KENET-CAO , KENET Secretariat Chief Accountant Office
+KENET-CEOS , KENET Secretariat CEO'S Office
+KENET-CTO , KENET Secretariat CTO'S Office
+KENET-MJER , KENET Milimani (Jeremiah)
+KENET-MLM , KENET Milimani Office
+KENET-OFF , KENET Secretariat Office
+KENET-RECE , KENET Secretariat Reception
+KENET-SAO , KENET Secretariat Accounts Office
+KENET-SBR , KENET Secretariat Boardroom
+KENET-STOR , KENET Stores
+KENET-TRBR , KENET Training Board Room
+KENET-TRNR , KENET Training Room
+KENET-UON , KENET UON Office
+KENYATTA-M , Kenyatta University
+KERICH TV , Kericho Township  TVC
+KERICHO TH , KERICHO TH
+KERICH-TEL , Kericho Telephone House
+KEVEVAPI , KEVEVAPI<>VETERINARY SERVICES UPPER KABETE
+KEVEVAPI-H , Kenya Veterinary Vaccines Production Institute - H
+KFU-KAIMOS , Kaimosi Friends University 
+KIBABII , St. Kibabii University -Bungoma
+KIBABII-UN , KIBABII UNIVERSITY
+KICD-MAIN , Kenya Institute of Curriculum Development 
+KICD-MEDIA , Kenya Institute of Curriculum Development - Media
+KIGANJO SS , Kiganjo SubStation KPLC
+KIHBT-COMM , Kenya Instit of Highways & Building Tech. Commerci
+KIHBT-ENTE , Kenya Institute of Highways and Building Technolog
+KIHBT-KBK , Kenya Instit of Highways & Building Tech. Kibiko
+KIHBT-KISI , Kenya Instit of Highways & Building Tech. Kisii
+KIHBT-NGON , Kenya Institute of Highways and Building Technolog
+KIJABE-MIS , Kijabe Mission Hospital
+KILIFI-HSP , KIlifi Hospital
+KIMATHI-UN , KIMATHI UNIVERSITY
+KIMC-ELD , Kenya Institute of Mass Communication - Eldoret
+KIMC-STH.B , Kenya Institute of Mass Communication - South B
+KIMC-STH.C , Kenya Institute of Mass Communication - South C
+KIM-LUTHER , Kenya Institute of Management - Luther
+KIRDI-KSM , KIRDI KISUMU
+KIRDI-STHC , Kenya Institute of Rsch & Dvpmt Institut-South C
+KIRINYAGA , Kirinyaga University<>Kutus NOFBI junction
+KIROGINE , Kirogine SubStation KPLC
+KISE , Kenya Institute of Special Education
+KISII-U , Kisii University <> Kisii TH
+KISIIU-ELD , Kisii University - Eldoret
+KISIIU-KRC , Kisii University - Kericho
+KISIIU-MIG , Kisii University - Migori
+KISII-UNIV , KISII UNIVERSITY
+KISIIU-NRB , Kisii University - Nairobi
+KIST-KIAMB , Kiambu Institute of Science and Technology
+KISUMU-TEL , Kisumu Telephone House
+KITUI-TEL , Kitui Telephone House
+KKJ-TVC , Kamukunji TVC
+KMFR-BAR , KMFRI-BARINGO
+KMFRI , Kenya Marine Fisheries Research Institute
+KMFRI NAI , KMFRI NAIROBI
+KMFRI-BAR , Kenya Marine & Fisheries Research Institut-Baringo
+KMFRI-GAZA , KMFRI Gaza
+KMFRI-KEG , Kenya Marine & Fisheries Research Institut-Kegati
+KMFRI-KSM , Kenya Marine & Fisheries Research Institut-Kisumu
+KMFRI-MSA , Kenya Marine & Fisheries Research Institut-Mombasa
+KMFRI-NAIV , Kenya Marine Fisheries Research Institute-Naivasha
+KMFRI-NRB , Kenya Marine & Fisheries Research Institut-Nairobi
+KMFRIS , Kenya Marine and Fisheries Research Institute - Sa
+KMFRI-SA , Kenya Marine & Fisheries Research Institut-Sangoro
+KMFRI-SAG , Kenya Marine & Fisheries Research Institut-Sagana
+KMFRI-SHM , Kenya Marine Fisheries Institute - Shimoni
+KMFRI-TUR , KMFRI TURKANA
+KMFR-KEG , KMFRI-KEGATI
+KMFR-KSM , KMFRI-KISUMU
+KMFR-MSA , KMFRI-MOMBASA
+KMFR-SAG , KMFRI-SAGANA
+KMGBO , Kamagambo Teachers training College
+KMRI-ALUPE , Kenya Medical Research Institute - Alupe
+KMRI-CDCNB , Kenya Medical Research Institute - CDC Nairobi
+KMRI-CDCS , Kenya Medical research institute - CDC SIAYA
+KMRI-GRDSC , Kenya Medical Research Institute - Graduate School
+KMRI-HQ , Kenya Medical Research Institute- Headquarter
+KMRI-KISIA , Kenya Medical Research Institute - Kisian
+KMRI-KRCTP , Kenya Medical Research Institute - Kisumu - RCTP
+KMRI-KWALE , Kenya Medical Research Institute - Kwale
+KMRI-NRCTP , Kenya Medical Research Institute - Nairobi RCTP
+KMRI-STLT , Kenya Medical Research Institute - Satellites
+KMTC - TSC , KMTC TSC
+KMTC CHWEL , KMTC Chwele
+KMTC EMBU , KMTC Embu
+KMTC KNG , KMTC Kinangop
+KMTC KOMBE , Kenya Medical Training College-Kombewa site 2
+KMTC LUGAR , Kenya Medical Training College Lugari
+KMTC MSBT , KMTC Marsabit
+KMTC NYAMA , Kenya Medical Training College-Nyamache
+KMTC NYERI , KMTC Nyeri
+KMTC THIKA , KMTC Thika
+KMTC UGJ , Kenya Medical Teachers College Ugunja
+KMTC-AWEND , Kenya Medical Traning Collenge - Awendo
+KMTC-BOMET , Kenya Medical Training College - Bomet
+KMTC-BONDO , Kenya Medical Training College - Bondo
+KMTC-BUNGO , Kenya Medical Training College - Bungoma
+KMTC-BUSIA , Kenya Medical Training College - Busia
+KMTC-CHEMO , KMTC Chemolingot
+KMTC-CHUKA , KMTC Chuka <> Chuka University
+KMTC-CHWEL , Kenya Medical Training College-Chwele
+KMTC-ELD , KMTC Eldoret
+KMTC-ELDOR , Kenya Medical Training College - Eldoret
+KMTC-GARIS , Kenya Medical Training College - Garissa
+KMTC-GATUN , KMTC Gatundu<>NOFBI Interception point
+KMTC-HOMBY , Kenya Medical Training College - Homabay
+KMTC-HQ , Kenya Medical Training College - Headquarters
+KMTC-IMENT , Kenya Medical Training College - Imenti
+KMTC-ISIOL , Kenya Medical Training College - Isiolo
+KMTC-ITEN , Kenya Medical Training college-Iten
+KMTC-KANGU , Kenya Medical Training College-Kangundo
+KMTC-KAPEN , KMTC Kapenguria
+KMTC-KAPKT , Kenya Medical Training College - Kapkatet
+KMTC-KAPTM , Kenya Medical Training College - Kaptumo
+KMTC-KAREN , Kenya Medical Training College - Karen
+KMTC-KARUR , Kenya Medical Training College - Karuri
+KMTC-KBRNT , Kenya Medical Training College - Kabarnet
+KMTC-KILIF , Kenya Medical Training College - Kilifi
+KMTC-KISII , Kenya Medical Training College - Kisii
+KMTC-KISUM , Kenya Medical Training College - Kisumu
+KMTC-KITAL , KMTC kITALE
+KMTC-KITUI , Kenya Medical Training College - Kitui
+KMTC-KKMGA , Kenya Medical Training College - Kakamega
+KMTC-KOMB1 , Kenya Medical Training College-Kombewa site 1
+KMTC-KOMB2 , Kenya Medical Training College-Kombewa site 2
+KMTC-KOMBE , Kenya Medical Training College-Kombewa site 1
+KMTC-KURIA , KMTC KURIA
+KMTC-KWALE , Kenya Medical Training College Kwale
+KMTC-LAMU , Kenya Medical Training College Lamu
+KMTC-LKVIC , Kenya Medical Training College Lake Victoria
+KMTC-LODWA , Kenya Medical Training College Lodwar
+KMTC-MACH , KMTC MACHAKOS
+KMTC-MAKUN , Kenya Medical Training College Makueni
+KMTC-MANDE , Kenya Medical Training College-Mandera
+KMTC-MANZA , KMTC Manza
+KMTC-MATHA , Kenya Medical Training College Mathare
+KMTC-MAUA , Kenya Medical Training College Maua
+KMTC-MBOON , Kenya Medical Training College Mbooni
+KMTC-MBUVO , KMTC Mbuvo
+KMTC-MCHKS , Kenya Medical Training College Machakos
+KMTC-MERU , Kenya Medical Training College Meru
+KMTC-MIGOR , Kenya Medical Training College Migori
+KMTC-MKNDU , Kenya Medical Training College Makindu
+KMTC-MOLO , Kenya Medical Training College -Molo
+KMTC-MRNGA , Kenya Medical Training College Murangá
+KMTC-MSA , Kenya Medical Training College Mombasa
+KMTC-MSBWN , Kenya Medical Training College Msambweni
+KMTC-MST , KMTC MASITA
+KMTC-MUMIA , Kenya Medical Training College-Mumias
+KMTC-MWING , KMTC-MWINGI
+KMTC-MWP , Kenya Medical Training College - Mtwapa
+KMTC-NAI , KMTC NAIROBI
+KMTC-NAKS , Kenya Medical Training College - Nakuru
+KMTC-NAROK , KMTC NAROK
+KMTC-NDW , KMTC Ndhiwa
+KMTC-NKR , KMTC NAKURU
+KMTC-NVKLO , Kenya Medical Training College - Navakholo
+KMTC-NYAHU , KMTC Nyahuru<>NOFBI Nyahururu
+KMTC-NYAMR , KMTC Nyamira
+KMTC-NYAND , KMTC Nyandarua
+KMTC-NYERI , Kenya Medical Training College Nyeri
+KMTC-OLOIT , Kenya Medical Training College-Oloitoktok
+KMTC-OTHAY , KMTC OTHAYA
+KMTC-PRETZ , Kenya Medical Training College Port Reitz
+KMTC-RACHU , Kenya Medical Training College Rachuonyo
+KMTC-RERA , Kenya Medical Training College-Rera
+KMTC-SIAYA , Kenya medical Training College Siaya
+KMTC-SIGOW , KMTC Sigowet
+KMTC-TANAR , Kenya Medical Training College Tana River
+KMTC-TAVET , Kenya Medical Training College Taveta
+KMTC-TESO , Kenya Medical Training College Teso
+KMTC-THIKA , Kenya Medical Training College Thika
+KMTC-TNSMR , Kenya Medical Training College Transmara
+KMTC-UGENY , Kenya Medical Training College-Ugenya
+KMTC-UGJA , Kenya Medical Training College - Ugunja
+KMTC-VIHIG , Kenya Medical Training College Vihiga
+KMTC-VOI , Kenya Medical Training College Voi
+KMTC-WAJIR , Kenya Medical Training College Wajir
+KMTC-WEBUY , Kenya Medical Training College Webuye
+KNEC-CALED , Kenya National Examinations Council - Caledonia/Mi
+KNEC-HQ , Kenya National Examinations Council - Headquarters
+KNEC-S.C , Kenya National Examinations Council - South C
+KNLS-ELD , KNLS ELDORET
+KNP-KISII , Kisii National Polytechnic
+KNP-KITALE , Kitale National Polytechnic 
+KNQA , Kenya National Qualifications Authority 
+KOITALEL-U , Koitalel Samoei
+KP-KISUMU , Kisumu Polytechnic
+KPLC KAM , KPLC KAMBURU
+KPLC KER , KPLC Kericho Substation
+KPLC LANET , KPLC Lanet Substation
+KPLC-NVSHA , KPLC NAIVASHA
+KPLC-RK , KPLC Ruaraka
+KRN , Kirinyaga
+KRN TTID , Karen Technical Training Institute for the Deaf
+KRNU-M , Kirinyaga University, Main Campus
+KRNU-MAIN , Kirinyaga University, Main Campus
+KS>CHIROMO , Kenya Science<>Jaffery Nairobi<>Qwetu HQ<>Chiromo
+KSA , Kenya Space Agency
+KSG-EMBU , Kenya School of Government - Embu
+KSG-HQKIA , Kenya School of Government - Headquarters (KIA)
+KSG-MATUGA , Kenya School of Government - Matuga
+KSG-MSA , Kenya School of Government - Mombasa
+KSL , Kenya School of Law
+KSL-KAREN , Kenya School of Law - Karen
+KSL-TOWN , Kenya School of Law - Town
+KSM , Kisii School of Medicine
+KSM PRV-HQ , KISUMU PROVINCIAL HEADQURTERS
+KSSM , Kenya School of Security Managemet 
+KSTVET-GGR , Kenya School of TVET, Gigiri
+KTTC , Kenya Technical Teachers College
+KTTC-ELEAR , Kenya Technical Teachers College - Elearning
+KTTC-KAGUM , Kagumo Teachers Training College
+KTTC-KAIMO , Kaimosi Teachers Training College
+KTTC-KENYE , Kenyenya Teachers Training College 
+KTTI-KARUM , Karumo Technical Training Institute
+KTTI-KATIN , Katine Technical Training Institute
+KTTI-KEROK ,  Keroka Technical Training Institution
+KTTI-KIIRU , Kiirua Technical Training Institute
+KU MN-REFH , KU Main campus<>KU referral Hospital
+KU PRIMARY , KU Primary school
+KUCCPS , Kenya Universities and Colleges Central Placement 
+KU-CITY , Kenyatta University - City
+KU-KI , KU - Kitui Campus
+KU-KITUI , Kenyatta University - Kitui
+KU-MN.KUTV , Kenyatta University - Main (Includes KUTV)
+KU-MNGINA , Kenyatta University - Mama Ngina UC
+KU-MSA , Kenyatta University - Mombasa
+KU-NAKURU , Kenyatta University - Nakuru
+KU-NCOAST , Kenyatta University - North Coast
+KUONUPS-RM , KENET UON UPS Room
+KU-PRKLAND , Kenyatta University - Parklands
+KU-RU , KU Refferal University
+KUTRRH , Kenyatta University, Teaching Referral & Research 
+KUTRRH-GAT , Kenyatta University, Teaching Referral & Research 
+KUTUS KUTU , Kutus Sub-Station
+KWI-CHIAKA , Kenya Water Institute - Chiakariga
+KWI-HQ , Kenya Water Institute - Headquarters
+KWI-IND , Kenya Water Institute - industrial
+KWI-KISUMU , Kenya Water Institute - Kisumu
+KWI-KITUI , Kenya Water Institute - Kitui
+KWS-HQ , Kenya Wildlife Service - Headquarters
+KWS-NAKURU , Kenya Wildlife Service - Nakuru
+KWSTI-NAIV , Kenya Wildlife Service Training Institute - Naivas
+KWTVC-KAJI , Kajiado West TVC
+LAIKIPIA-U , Laikipia University
+LANET-SEC. , Lanet Secondary School
+LAWSON-SCH , Lawson School
+LDTTC , Lugari Diploma Teacher Training College
+LDTTC-LUGA , Lugari Diploma Teacher Training College
+LEAD NOC , LEAD NOC Office
+LILIAN , Lilian Kamau
+LKPIA-NYAH , Laikipia University <>Nyahururu TH
+LRIH-KIPKA , LRIH KIPKAREN
+LRIH-MAIN , Living Room International  Hospital - Main
+LTVC-LMR , Limuru Technical and Vocational College
+LUKENYA-UN , Lukenya University
+MAASAIM-UN , Maasai Mara University
+MACH -TTC , Machakos TTC 
+MACHAKOS , MACHAKOS
+MACHAKOS B , Machakos Boys/Girls
+MACHAKOS-M , Machakos Manza
+MACHAKOSTH , Machakos TH
+MACHAKOS-U , MACHAKOS UNIVERSITY COLLEGE
+MARSABIT-G , Marsabit Girls
+MASENO TWN , Maseno Town Campus - Varsity
+MASENO-HOM , Maseno Homabay Campus
+MASENO-TWN , Maseno TC <>Kisumu TH
+MASENOU-KS , Maseno University Kisumu town
+MASINGATVC , MASINGA TVC
+MATERH-MN , Mater Misericordiae Hospital main
+MATERH-SM , Mater Misericordiae Hospital-Shujaa Mall
+MATUU-TEL , Matuu Telephone House
+MAUREEN , Maureen Mii
+MBA-POLY , Mombasa Poly <> Mombasa TH
+MBS-TEL , Mombasa Telephone House
+MEC , Moi Education Center
+MERU TRH , Meru TRH
+MERU UNI-M , Meru University -Marimba Centre
+MERU-POLY , Meru Polytechnic
+MERU-TEL , Meru Telephone House
+MERU-TELP , Meru Telephone House
+MERUUNI-MT , MERU UNIVERSITY OF SCIENCE AND TECH - MERU TOWN
+MERU-UNIV , Meru University of Science and Technology - Main
+MERU-UNK , Meru University <>KeMU
+MERUUN-MER , Meru University of Science and Technology - Meru T
+MILIM-RECE , KENET Milimani Reception
+MKU-ELD , Mount Kenya University - Eldoret
+MKU-KITALE , Mount Kenya University - Kitale
+MKU-MERU , Mount Kenya University - Meru
+MKU-MN , Mount Kenya University - Main
+MKU-MSA , Mount Kenya University - Mombasa
+MKU-NAKURU , Mount Kenya University - Nakuru
+MKU-NRB , Mount Kenya University - Nairobi
+MKU-PKLAND , Mount Kenya University - Parklands
+MLM-MOTHER , KENET Milimani Mother's Room
+MMUK-UNV , Multi Media University
+MMUST , Masinde Muliro University of Science and Technolog
+MMUST TH K , MMUST<>Kakamega TH
+MNP-MERU , Meru National Polytechnic 
+MOI UN-AMP , Moi_CHS<> AMPATH
+MOI UN-CHS , Moi University - CHS (Moi POP)
+MOI-LAWSCH , Moi University - School of Law
+MOIUN-AIR , Moi University - Airstrip
+MOI-UNIV , Moi University - Main
+MOIUN-MSA , Moi University - Mombasa
+MOIUN-NRB , Moi University - Nairobi
+MOIUN-PENS , Moi University - Pension
+MOIUN-RVTX , Moi University - Rivatex (SOA) 
+MRC-MPALA , Mpala Research Centre
+MRGA-SCH , Moringa School
+MSNO-ODKAN , Maseno University - Odero Akango
+MSNO-SIRIB , Maseno University - Siriba
+MTRH , AMPATH<>MTRH
+MTTI-BLIND , Machakos Technical Training Institute for Blind
+MTTI-MASAI , Masai Technical Training Institute
+MTTI-MATIL , Matili Technical Training Institute
+MTTI-MICHU , Michuki Technical Training Institute 
+MTTI-MITUN , Mitunguu Technical Training Institute 
+MTTI-MURAG , Muraga TTI
+MTTI-MURAN , Murang'a Technical Training Institute 
+MTTI-TWN , Matili Technical Training Institute - Town Campus
+MURANG-TEL , Muranga Telephone House
+MUST-TOWN , MUST Town
+MUT-MAIN , Murang'a University of Technology (MUT) - Main
+MUT-MARIRA , Murang'a University of Technology - marira
+NACOSTI , NACOSTI
+NAIROBITTI , Nairobi TTI (new campus)
+NAKURU-TH , NAKURU TH<>Egerton Njoro
+NANYUKI TH , Nanyuki TH
+NANYUK-TEL , Nanyuki Telephone House
+NAROK-UNIV , Narok University <>Narok TH
+NAZARENE , African Nazarene University
+NCSTI , National Commission for Science, Tech & Innovation
+NDC-KAREN , National Defence College - Karen
+NDCL , NDC Lanet
+NDU-LANET , National Defence University - Lanet
+NDU-MAIN , National Defense University Main
+NELISA , Nelisa Mwongera
+NGIYA-HSCH , Ngiya High School
+NICTIIC , National ICT Innovation & Integration Centre
+NIRU , National Intelligence and Research University
+NIST-NYAND , Nyandarua Institute of Science and Technology 
+NKABUN-TTI , Nkabune Technical Training Institute
+NKUBU-SFC , NKUBU Safaricom Base Station
+NMK-KAREN , National Museums of Kenya - Karen
+NMK-MAIN , National Museums of Kenya - HQ
+NRF , National Research Fund
+NTTC-NAROK , Narok Teachers Training College 
+NTTI , Nairobi Technical Training Institute
+NTTI-NRB , Nairobi Technical Training Institute
+NTVC-NGONG , Ngong Technical and Vocational College
+NTVC--NUU , Nuu Technical and Vocational College 
+NYAHUR-TEL , Nyahururu Telephone House
+NYAND-POL , Nyandarua Polytechnic
+NYERI POLY , Nyeri Polytechnic
+NYERI SPAN , NYERI SPAN
+NYERI-TEL , Nyeri Telephone House
+OMC-N , Outspan Medical College(Nyeri)
+OTVC-OMUGA , Omuga Technical and Vocational College 
+OUTSPAN-HO , Outspan Hospital
+OUTSPAN-ME , Outspan Medical College
+OUTSPAN-NY , Outspan Hospital - Nyeri
+PACU-MAIN , Pan Africa Christian University - Main
+PACU-VR , Pan Africa Christian University - Valley Road
+PAUISTI , Pan African UNV Insti for Basic Scie Tech &Innovat
+PCEA-CHOS , PCEA Chogoria Hospital
+PETER MUIA , Peter Muia
+PIU-MAIN , Pioneer International Unviersity - Main
+PIU-MARAGU , Pioneer International Unviersity - Maragua
+PIU-MURANG , Pioneer International Unviersity - Murang'a
+PIU-THIKA , Pioneer International Unviersity - Thika
+PROF IDOWU , Prof.Abraham Idowu
+PROF MBITH , Prof MBITHI
+PUEA , Presbyterian University of East Africa
+PUEA-MAIN , The Presbyterian University of East Africa
+PWANI KEMR , Pwani University <> Kilifi TH
+PWANI-UNIV , Pwani University - Main
+QOA , QOA
+QWETU NLD , Qwetu Northlands
+QWETU OUTE , Qwetu Outering
+QWETU-CUEA , QWETU CUEA
+QWETU-HOST , Qwetu Hostels
+QWETU-HURL , QWETU HURLINGAM
+QWETU-JOGO , QUETU Jogoo
+QWETU-JUJA , QWETU JUJA
+QWETU-RUAR , QWETU Ruaraka
+RAFIU-MN , RAF International University - Main
+RAFIU-SC , RAF International University - South C
+RAMOGI , Ramogi Institute
+RCMRD , RCMRD
+RCMRD-ICPE , RCMRD<>ICIPE Interception Point
+RFV-KIJABE , Rift Valley Academy<>Kijabe Hospital
+RIARA -UNV , Riara University
+RONGO-BS , Rongo base station
+RONGO-UNIV , Rongo University
+RONGO-UNJU , Rongo University<> Rongo NOFBI junction
+RONGO-UNV , Rongo University
+RONG-U , Rongo University
+RUARAKA-SS , Ruaraka SubStation KPLC
+RVA , Rift Valley Academy
+RVTTI-RV , Rift Valley Technical Training Institute
+SAF-BTS , SAFARICOM BTS
+SAMEER POP , SAMEER POP
+SCU-SCOTT , Scott Christian University
+SEACOM , SEACOM
+SEACOM CLS , SEACOM CLS
+SEACOM-LAN , Seacom Landing Station
+SEG-BAR , SEGERO ADVENTIST
+SEGERO ADV , Segero Adventist
+SEKU , SEKU
+SEKU-KITUI , South Eastern Kenya University - Kitui
+SEKU-M.AND , South Eastern Kenya University - Mtito Andei
+SEKU-MAIN , South Eastern Kenya University - Main
+SEKU-MU , SEKU Main University
+SEKU-WOTE , South Eastern Kenya University - Wote
+SERVER-FR2 , KENET Second Floor Serve Room
+SEUCO , SEUCO
+SHANTU-TTC , SHANTU TTC
+SIAYA-TEL , Siaya Telephone
+SIGALAGALA , Sigalagala <> NOFBI Intercepion Point
+SIRUTI , Siruti Technical Vocational College
+SIT-SIAYA , Siaya Institute of Technology
+SJTI-DEAF , St. Joseph's Technical Institute for the Deaf - Ny
+SLCMC-SLEO , Sister Leonella Consolata Medical College
+SPA , Sukari Presbyterian Academy
+SP-SIGALAG , Sigalagala Polytechnic
+SSU , Scott Christian University
+ST JSPH-NY , St Joseph Nyangoma TTI
+ST. TERESA , St Theresa's kabula
+ST.PAUL-AC , St. Paul Academy
+ST.PU-MKS , St. Paul's University - Machakos
+ST.PUN-NKR , St. Paul's University - Nakuru
+ST.PUN-NRB , St. Paul's University - Town (Nairobi)
+ST.PUNV-MN , St. Paul's University - Main
+STJ-CKL , St Joseph Chakol
+STJ-NYAB , St. Joseph's Nyabondo
+ST-PL-MLK , ST PAUL'S MILUKI GIRLS SEC SCHOOL
+STRATHMORE , Strathmore University
+STTI-SAGAN , Sagana Technical Training Institution
+STTI-SIALA , Siala Technical Training Institute 
+STVC-B&D , Sikri Technical & Vocational College -Blind & Deaf
+THARAKA-UN , tHARAKA UNIVERSITY
+THG-TTC , Thogoto Teachers Training College
+THIKA TH , Thika TH
+TIAPD-TEGE , Tegemeo Institute of Agricultural Policy  and Deve
+TI-TUNAPAN , Tunapanda Institute 
+TNENP-NE , The North Eastern National Polytechnic
+TNWK , Tenwek Hospital Ngito
+TNWK KBSN , Tenwek Kaboson
+TNWK-MAIN , Tenwek Hopsital - Main
+TNWK-NGITO , Tenwek Hospital Ngito
+TRA-ELDORE , Toursim Regulatory Authority - Eldoret
+TRA-HQ , Tourism Regulatory Authority - Headquarters
+TRA-KISUMU , Toursim Regulatory Authority - Kisumu
+TRA-MALIND , Toursim Regulatory Authority - Malindi
+TRA-MSA , Toursim Regulatory Authority - Mombasa
+TRA-NAKURU , Toursim Regulatory Authority - Nakuru
+TRA-NYERI , Toursim Regulatory Authority - Nyeri
+TRI , Tourism Research Institute 
+TSC , Teacher Service Commission 
+TSEIK-TTI , Tseikuru Technical Training Institute
+TTTI-THIKA , Thika Technical Training Institute
+TTU-MAIN , Taita Taveta University - Main
+TTU-NGEREN , Taita Taveta University - Ngerenyi
+TTVC-TURBO , Turbo Technical & Vocational College
+TUC , Tangaza University  College
+TUK-LADIES , Technical University of Kenya - Womens Hostel
+TUK-MAIN , Technical University of Kenya - Main
+TUK-MEN , Technical University of Kenya - Mens Hostel
+TUM-KWALE , Technical University of Mombasa - Kwale
+TUM-LAMU , Technical University of Mombasa - Lamu
+TUM-MAIN , Technical University of Mombasa - Main
+TVETA KISU , TVETA KISUMU
+TVETA-ELD , Technical & Vocational Edu& Training Authority-ELD
+TVETA-HQ , Technical & Vocational Edu& Training Authority-HQ
+TVET-CDACC , TVET-Curriculum Dev Assess & Certification Council
+TVTA-MSA , TVETA - Mombasa
+UEAB , University of EA – Baraton
+UFB , Universities Fund Board
+UMMAL-OFFI , Umma University - Liaison Office
+UMMA-THIKA , Umma University - Thika
+UMMA-UNVGR , Umma University - Garissa
+UMMA-UNVKJ , Umma University - Kajiado
+UMMA-UNVMG , Umma University - Kajiado ( to Manaar Girls)
+UMMA-UNVTG , Umma University - Kajiado ( to Tembea Girls)
+UOE-ELDT , University of Eldoret - Eldoret Town
+UOE-M , University of Eldoret - Main
+UOE-NRB , University of Eldoret - Nairobi
+UOK-KAPKAT , University of Kabianga - Kapkatet
+UOK-KERICH , University of Kabianga - Kericho
+UOK-MAIN , University of Kabianga - Main
+UOK-SOTIK , University of Kabianga - Sotik
+UON DATA C , KENET UON Data Centre
+UON-CHIROM , University of Nairobi - Chiromo
+UON-JOURN , University of Nairobi - Journalism
+UON-KIKUYU , University of Nairobi - Kikuyu
+UON-KISUMU , UON Kisumu Campus
+UON-KNH , University of Nairobi - KNH
+UON-KSCIE , University of Nairobi - Kenya Science
+UON-LWKABE , University of Nairobi - Lower Kabete
+UON-MAIN , University of Nairobi
+UON-MKSUC , University of Nairobi - Mosoriot (KSUC)
+UON-MOMBAS , UON Mombasa Campus
+UON-PKLAND , University of Nairobi - Parklands
+UON-SECRET , UoN Secretariat
+UON-UPKABE , UON Upper Kabete<>NACOSTI
+USIU , United States International University
+USIU DATA , KENET USIU Data Centre
+USIU-RECE , KENET USIU Reception
+UTALII-COL , Utalii College
+UTTC-UGENY , Ugenya Teachers Training College
+W-BANK , World Bank
+WOTE TH , WOTE TH
+WTTI-WOTE , Wote Technical Training Institute
+ZETECH-MN , Zetech Main
+ZETECH-PIO , Zetech University - Pioneer
+ZETECH-RUI , Zetech University Ruiru
+ZETECH-STB , Zetech University - Stanbank

@@ -120,8 +120,8 @@ class Category(models.Model):
             verbose_name_plural = 'Categories'
 
 class Location(models.Model):
-    name = models.CharField(max_length=100)
-    name_alias = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    name_alias = models.CharField(max_length=100,unique=True)
 
     def __str__(self):
         return f"{self.name}"

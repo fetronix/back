@@ -1,25 +1,28 @@
-# locations/management/commands/load_locations.py
+import pandas as pd
 from django.core.management.base import BaseCommand
-from KENETAssets.models import Location
+from KENETAssets.models import Location  # Adjust the import to your app name
 
 class Command(BaseCommand):
-    help = 'Loads locations from a text file into the Locations table with name and name_alias fields'
+    help = "Load locations from FA_Cleaned_Final.xlsx"
 
     def handle(self, *args, **kwargs):
-        # Path to your text file
-        file_path = 'media/cleaned_updated_name_name_alias1.txt'
+        # Load the Excel file
+        file_path = "media/FA_Cleaned_Final.xlsx"  # Replace with the actual path
+        data = pd.read_excel(file_path)
 
-        # Open the file and read lines
-        with open(file_path, 'r') as file:
-            locations = file.readlines()
+        # Iterate through the data and save it to the database
+        for _, row in data.iterrows():
+            name = row.get('Name')  # Adjust column name to match the Excel header
+            name_alias = row.get('Code')  # Adjust column name to match the Excel header
 
-        # Add each location to the database
-        for line in locations:
-            # Split line into name and name_alias (assuming tab separation)
-            fields = line.strip().split('\t')
-            if len(fields) == 2:
-                name, name_alias = fields
-                # Create a Location instance with both name and name_alias
-                Location.objects.create(name=name, name_alias=name_alias)
+            if name and name_alias:  # Ensure no empty entries
+                location, created = Location.objects.get_or_create(
+                    name=name,
+                    name_alias=name_alias
+                )
+                if created:
+                    self.stdout.write(self.style.SUCCESS(f"Added: {name} ({name_alias})"))
+                else:
+                    self.stdout.write(self.style.WARNING(f"Skipped: {name} ({name_alias}) - Already exists"))
 
-        self.stdout.write(self.style.SUCCESS('Successfully loaded locations into the database!'))
+        self.stdout.write(self.style.SUCCESS("Import completed!"))

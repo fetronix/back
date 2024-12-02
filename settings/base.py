@@ -80,7 +80,8 @@ INSTALLED_APPS = [
     'rest_framework', 
     'corsheaders',
     
-    'KENETAssets.apps.KENETAssetsConfig'
+    'KENETAssets.apps.KENETAssetsConfig',
+    'version_control'
 
 ]
 
@@ -124,7 +125,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     },
 # ]
 
-SEMANTIC_APP_LIST = [{ "app_label": "KENETAssets" },{ "app_label": "background_task" }]
+SEMANTIC_APP_LIST = [{ "app_label": "KENETAssets" },{ "app_label": "version_control" },{ "app_label": "background_task" }]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
