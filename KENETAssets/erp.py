@@ -6,6 +6,16 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the environment variables
+soap_url = os.getenv('SOAP_URL')
+username = os.getenv('ERP_USERNAME')
+password = os.getenv('ERP_PASSWORD')
 
 
 # Define the view that handles the SOAP request
@@ -41,9 +51,10 @@ def create_fixed_asset(request, asset_id):
         """
 
         # Define the SOAP endpoint and authentication details
-        soap_url = "http://a01-test.erp.kenet.or.ke:7047/BC190/WS/KENET%20LIVE/Page/FixedAssetCard"
-        username = 'GLUORA'
-        password = 'GOL@#k3n3t?!!'
+          # Get SOAP endpoint and credentials from environment variables
+        soap_url = os.getenv('SOAP_URL')
+        username = os.getenv('ERP_USERNAME')
+        password = os.getenv('ERP_PASSWORD')
 
 
         # SOAP headers
@@ -118,9 +129,9 @@ def update_fixed_asset(request, asset_id):
         """
 
         # Define the SOAP endpoint and authentication details
-        soap_url = "http://a01-test.erp.kenet.or.ke:7047/BC190/WS/KENET%20LIVE/Page/FixedAssetCard"
-        username = 'GLUORA'
-        password = 'GOL@#k3n3t?!!'
+        soap_url = os.getenv('Soap_Update')
+        username = os.getenv('ERP_USERNAME')
+        password = os.getenv('ERP_PASSWORD')
 
 
         # SOAP headers
