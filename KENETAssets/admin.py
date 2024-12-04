@@ -15,7 +15,7 @@ from django.shortcuts import redirect
 
 class AssetsAdmin(admin.ModelAdmin):
     # Fields to display in the list view
-    list_display = ('asset_description', 'asset_description_model', 'category', 'person_receiving', 
+    list_display = ('asset_id','asset_description', 'asset_description_model', 'category', 'person_receiving', 
                     'serial_number', 'kenet_tag', 'location', 'status', 'date_received', 'custom_action')
     
     # Fields to search for in the admin interface

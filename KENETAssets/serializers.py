@@ -51,7 +51,9 @@ class AssetsSerializer(serializers.ModelSerializer):
             'kenet_tag', 
             'location',
             'status', 
-            'category'
+            'category',
+            'delivery',
+            'asset_id'
         ]
    
 class DeliveryListSerializer(serializers.ModelSerializer):
@@ -72,6 +74,7 @@ class DeliveryListSerializer(serializers.ModelSerializer):
             'comments',
             'delivery_id',
         ]
+        
    
         
 
