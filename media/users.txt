@@ -1,0 +1,5 @@
+1	kenet@kenet.or.ke	kenet@kenet.or.ke	ASSETS	ADMIN
+2	fnzomo@kenet.or.ke	fnzomo@kenet.or.ke	fidelis	mwendwa
+3	kaseda@kenet.or.ke	kaseda@kenet.or.ke	Kennedy	Aseda
+4	testuser	testuser@kenet.or.ke	TEST	USER
+5	testsuperuser	testsuperuser@kenet.or.ke	ADMIN	TEST

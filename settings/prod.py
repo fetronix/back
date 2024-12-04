@@ -54,6 +54,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'  # Media settings
 
 
+# Email Configuration in settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider's SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@example.com'
+EMAIL_HOST_PASSWORD = 'your_email_password'  # Use an environment variable for security
+DEFAULT_FROM_EMAIL = 'Your App <your_email@example.com>'
+
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # Optional
 
@@ -82,7 +91,8 @@ INSTALLED_APPS = [
     'rest_framework', 
     'corsheaders',
     
-    'KENETAssets.apps.KENETAssetsConfig'
+    'KENETAssets.apps.KENETAssetsConfig',
+    'version_control'
 
 ]
 
@@ -126,7 +136,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     },
 # ]
 
-SEMANTIC_APP_LIST = [{ "app_label": "KENETAssets" },{ "app_label": "background_task" }]
+SEMANTIC_APP_LIST = [{ "app_label": "KENETAssets" },{ "app_label": "version_control" },{ "app_label": "background_task" }]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -205,6 +215,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 1,  # Adjust this number to define the page size
+    
 }
 
 

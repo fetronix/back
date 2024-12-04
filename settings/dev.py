@@ -24,6 +24,10 @@ SECRET_KEY = 'django-insecure-l^2s*xig=m^-zl)fk8eukp4qse+fn6c$f4vsc6fhd=+4ocvel(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+
+
+
+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -70,7 +74,8 @@ INSTALLED_APPS = [
     'rest_framework', 
     'corsheaders',
     
-    'KENETAssets.apps.KENETAssetsConfig'
+    'KENETAssets.apps.KENETAssetsConfig',
+    'version_control'
 
 ]
 
@@ -124,7 +129,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     },
 # ]
 
-SEMANTIC_APP_LIST = [{ "app_label": "KENETAssets" },{ "app_label": "background_task" }]
+SEMANTIC_APP_LIST = [{ "app_label": "KENETAssets" },{ "app_label": "version_control" },{ "app_label": "background_task" }]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -157,6 +162,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # )
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -173,8 +179,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Additional static files
     # You can add more directories here
 ]
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'  # Media settings
+MEDIA_URL = '/devmedia/'
+MEDIA_ROOT = BASE_DIR / 'devmedia'  # Media settings
 
 
 
@@ -203,6 +209,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10,  # Adjust this number to define the page size
+    
 }
 
 

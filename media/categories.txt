@@ -1,0 +1,8 @@
+1	Computers
+2	Network Equipment
+3	Furniture & Fittings
+4	Telephony
+5	Kitchenware
+6	Fiber Infrastructure
+7	Motor Vehicles
+8	Office Equipment

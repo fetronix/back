@@ -120,14 +120,16 @@ class Category(models.Model):
             verbose_name_plural = 'Categories'
 
 class Location(models.Model):
-    name = models.CharField(max_length=100)
-    name_alias = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    name_alias = models.CharField(max_length=100,unique=True)
 
     def __str__(self):
         return f"{self.name}"
     class Meta:
             verbose_name = 'Location'
             verbose_name_plural = 'Locations'
+            
+    
             
 
 
@@ -153,6 +155,7 @@ class Assets(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='primary_location', blank=True, null=True)
     sent_to_erp = models.BooleanField(default=False)
     destination_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='going_location', blank=True, null=True)
+    asset_id = models.CharField(max_length=10, unique=True, editable=False, blank=True)  # ALK ID field
     
     
     status = models.CharField(
@@ -169,9 +172,24 @@ class Assets(models.Model):
     def __str__(self):
         return f"{self.asset_description} ({self.serial_number}) ({self.kenet_tag}) ({self.location}) ({self.asset_description_model}) ({self.status}) ({self.id}) ({self.destination_location})"
 
+    def save(self, *args, **kwargs):
+            # Generate a unique SLK ID if not already set
+            if not self.asset_id:
+                # Fetch the last created Delivery instance
+                last_delivery = Assets.objects.all().order_by('id').last()
+                if last_delivery:
+                    last_id = int(last_delivery.asset_id[3:])  # Extract the integer part
+                    new_id = last_id + 1
+                else:
+                    new_id = 1
+                # Format as SLK ID (e.g., "SLK001")
+                self.asset_id = f'ALK{new_id:03d}'
+            super().save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Asset'
         verbose_name_plural = 'Assets'
+        ordering = ['-id']
             
 
 
@@ -266,6 +284,7 @@ class Checkout(models.Model):
     class Meta:
         verbose_name = 'Dispatch List'
         verbose_name_plural = 'Dispatch Lists'
+        ordering = ['-checkout_date']
 
 
 class AssetsMovement(models.Model):

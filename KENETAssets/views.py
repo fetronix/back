@@ -7,6 +7,7 @@ from .serializers import *
 from rest_framework.permissions import IsAdminUser
 from django.views.generic import DetailView
 from background_task import background
+from rest_framework.generics import ListAPIView
 from django.http import JsonResponse
 from django.contrib.auth import logout
 from django.contrib import messages
@@ -24,6 +25,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from rest_framework.filters import SearchFilter
 from rest_framework import viewsets, filters, status
+from rest_framework.pagination import PageNumberPagination
 
 class LoginView(APIView):
     permission_classes = [AllowAny]  # Allow any user to access this view
@@ -56,12 +58,25 @@ class LoginView(APIView):
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
+class AssetsPagination(PageNumberPagination):
+    page_size = 10  # Set the number of assets per page
+    page_size_query_param = 'page_size'  # Allow dynamic page size adjustment
+    max_page_size = 100  # Set a max page size limit
 
-class AssetsListView(generics.ListAPIView):
-    queryset = Assets.objects.all()
+class AssetsListView(ListAPIView):
+    serializer_class = AssetsSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = AssetsPagination
+
+    def get_queryset(self):
+        # Filter queryset to include only items with status 'instore'
+        return Assets.objects.filter(status='instore').order_by('-id')
+
+class AssetsListViewAll(generics.ListAPIView):
+    queryset = Assets.objects.all().order_by('-id')
     serializer_class = AssetsSerializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can access
-   
+    # pagination_class = AssetsPagination
 
 class DeliveryListView(generics.ListAPIView):
     queryset = Delivery.objects.all()
@@ -149,6 +164,7 @@ class LocationViewSet(viewsets.ModelViewSet):
     serializer_class = LocationSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'name_alias']
+    
 
 class DeliveryViewSet(viewsets.ModelViewSet):
     queryset = Delivery.objects.all()
@@ -296,9 +312,18 @@ class CheckoutListView(generics.ListAPIView):
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)  # Show only the user's checkouts
 
-class CheckoutAdminListView(generics.ListAPIView):
+
+class CheckoutPagination(PageNumberPagination):
+    page_size = 10  # Set the number of assets per page
+    page_size_query_param = 'page_size'  # Allow dynamic page size adjustment
+    max_page_size = 100  # Set a max page size limit
+
+
+
+class CheckoutAdminListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CheckoutSerializer
+    pagination_class = CheckoutPagination
 
     def get_queryset(self):
         # Get the logged-in user
@@ -694,3 +719,37 @@ class ReturnDecomissionedAssetView(APIView):
 
         except Assets.DoesNotExist:
             return Response({"detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+import openpyxl
+from openpyxl.styles import Alignment
+from django.http import HttpResponse
+from .models import Location
+
+def download_locations_as_excel(request):
+    # Create a workbook and worksheet
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = 'Locations'
+
+    # Add header row
+    headers = ['ID', 'Name', 'Name Alias']
+    for col_num, header in enumerate(headers, 1):
+        cell = sheet.cell(row=1, column=col_num)
+        cell.value = header
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+
+    # Add data rows
+    locations = Location.objects.all()
+    for row_num, location in enumerate(locations, start=2):
+        sheet.cell(row=row_num, column=1).value = location.id
+        sheet.cell(row=row_num, column=2).value = location.name
+        sheet.cell(row=row_num, column=3).value = location.name_alias
+
+    # Set response
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=locations.xlsx'
+
+    # Save workbook to response
+    workbook.save(response)
+    return response

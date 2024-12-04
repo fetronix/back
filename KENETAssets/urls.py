@@ -14,6 +14,8 @@ router.register(r'user-checkouts', UserCheckoutSet, basename='user-checkouts')
 handler404 = 'KENETAssets.views.custom_404'
 handler500 = 'KENETAssets.views.custom_505'
 
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     
@@ -22,6 +24,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
     
     path('api/assets/', AssetsListView.as_view(), name='assets-list'),
+    path('api/assetsall/', AssetsListViewAll.as_view(), name='assets-list-all'),
     path('location/create_or_update/', create_or_update_location, name='create_or_update_location'),
     path('api/delivery/', DeliveryListView.as_view(), name='delivery-list'),
     path('assets/', AssetNewCreateView.as_view(), name='asset-create'),
@@ -56,5 +59,12 @@ urlpatterns = [
     # Moving datat to erp 
     path('create-fixed-asset/<int:asset_id>/', create_fixed_asset, name='create_fixed_asset'),
     path('update-fixed-asset/<int:asset_id>/', update_fixed_asset, name='update_fixed_asset'),
+    
+     # Password Reset URLs
+    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('download-locations/', download_locations_as_excel, name='download_locations'),
     
 ]

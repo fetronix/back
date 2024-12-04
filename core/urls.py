@@ -15,7 +15,8 @@ admin.site.site_title = 'KENET admin panel' # default: "Django site admin"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('app/', include('KENETAssets.urls')),
-    path('', home_view, name='home')
+    path('', home_view, name='home'),
+    path('api/', include('version_control.urls')),
 
 ]
 if settings.DEBUG:
