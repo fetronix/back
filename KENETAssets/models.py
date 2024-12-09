@@ -3,17 +3,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
-import base64
-from django.core.files.base import ContentFile
-
 import base64
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
-
 from django.utils.html import format_html
+from django.conf import settings
+
+
 
 class UserRoles(models.TextChoices):
     CAN_VIEW = 'can_view', 'Can View'
@@ -138,7 +135,6 @@ class Assets(models.Model):
         ('instore', 'In Store'),
         ('faulty', 'Faulty'),
         ('onsite', 'On Site'),
-        ('faulty', 'Faulty'),
         ('decommissioned', 'Decommissioned'),
         ('pending_release', 'Pending Release'),
         ('pending_approval', 'Pending Approval '),
@@ -210,12 +206,15 @@ class Cart(models.Model):
         verbose_name_plural = 'Dispatch Baskets'
         # ordering = ['-date_created']  # Orders by most recent movements first
 
-
-from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 import base64
-from django.db import models
-from django.conf import settings
+from django.core.files.base import ContentFile
+
+def get_base64_image(image_field):
+    if image_field:
+        with open(image_field.path, 'rb') as img:
+            return base64.b64encode(img.read()).decode('utf-8')
+    return None
+
 
 class Checkout(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -230,6 +229,8 @@ class Checkout(models.Model):
     # verifier_user = models.CharField(max_length=255, null=True, blank=True,)
     verifier_user = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='verifier_user', on_delete=models.CASCADE,null=True,blank=True)
     checkout_url_link = models.URLField(blank=True, null=True, help_text="Optional URL for checkout link")
+    
+    pdf_file = models.FileField(upload_to='release_forms/', blank=True, null=True)
 
     def __str__(self):
         return f"Dispatched by {self.user.username} on {self.checkout_date}"
@@ -265,6 +266,13 @@ class Checkout(models.Model):
         if self.signature_image and hasattr(self.signature_image, 'url'):
             return self.signature_image.url
         return '/static/default_signature.png'  # Fallback image URL if no signature is found
+
+    
+    def get_user_signature_base64(self):
+        return get_base64_image(self.user_signature_image)
+
+    def get_signature_base64(self):
+        return get_base64_image(self.signature_image)
 
     def update_quantities(self, quantity_required: int, quantity_issued: int):
         if quantity_issued > quantity_required:
@@ -309,3 +317,16 @@ class AssetsMovement(models.Model):
         verbose_name = 'Asset Movement'
         verbose_name_plural = 'Asset Movements'
         ordering = ['-date_created']  # Orders by most recent movements first
+
+
+
+
+class SavedPDF(models.Model):
+    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    pdf_file = models.FileField(upload_to='pdfs/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"PDF by {self.user.username} on {self.created_at}"
+
+

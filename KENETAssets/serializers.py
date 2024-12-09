@@ -211,7 +211,7 @@ class CheckoutSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Checkout
-        fields = ['id', 'user', 'verifier_user','cart_items', 'checkout_date', 'remarks','signature_image','user_signature_image']
+        fields = ['id', 'user', 'verifier_user','cart_items', 'checkout_date', 'remarks','signature_image','user_signature_image','pdf_file']
 
 
 

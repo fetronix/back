@@ -26,6 +26,15 @@ from requests.auth import HTTPBasicAuth
 from rest_framework.filters import SearchFilter
 from rest_framework import viewsets, filters, status
 from rest_framework.pagination import PageNumberPagination
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.core.files.base import ContentFile
+import os
+import base64
+from django.conf import settings
+from django.core.files.storage import default_storage
+
 
 class LoginView(APIView):
     permission_classes = [AllowAny]  # Allow any user to access this view
@@ -323,7 +332,7 @@ class CheckoutPagination(PageNumberPagination):
 class CheckoutAdminListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CheckoutSerializer
-    pagination_class = CheckoutPagination
+    # pagination_class = CheckoutPagination
 
     def get_queryset(self):
         # Get the logged-in user
@@ -346,16 +355,73 @@ class CheckoutAdminListView(ListAPIView):
             # If no matching checkouts exist, return an empty queryset
             return Checkout.objects.none()
 
+
+def get_base64_image(image_path):
+    """
+    Converts an image file to a base64 string.
+    :param image_path: Path to the image file.
+    :return: Base64-encoded string of the image.
+    """
+    full_path = os.path.join(settings.BASE_DIR, image_path)
+    with open(full_path, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+    return f"data:image/png;base64,{encoded_string}"
+
+
 class CheckoutDetailView(DetailView):
     model = Checkout
     template_name = 'kenet_release_form.html'  # Create this template for displaying the details
     context_object_name = 'checkout'
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['logo_url'] = '/static/assets/images/logo.png'  # Adding logo URL
+    #     context['stamp_url'] = '/static/assets/images/kenet_stamp.png'  # Adding stamp URL
+    #     return context
+
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['logo_url'] = '/static/assets/images/logo.png'  # Adding logo URL
-        context['stamp_url'] = '/static/assets/images/kenet_stamp.png'  # Adding stamp URL
+        
+        # Convert images to base64 strings
+        context['logo_base64'] = get_base64_image('static/assets/images/logo.png')
+        context['stamp_base64'] = get_base64_image('static/assets/images/kenet_stamp.png')
         return context
+
+    def get(self, request, *args, **kwargs):
+        # Check for action parameter to save the PDF
+        action = request.GET.get('action', None)
+        if action == 'save_pdf':
+            return self.generate_and_save_pdf()
+        return super().get(request, *args, **kwargs)
+
+    def generate_and_save_pdf(self):
+        checkout = self.get_object()
+        cart_items = checkout.cart_items.all()
+
+        # Get base64 images
+        logo_base64 = get_base64_image('static/assets/images/logo.png')
+        stamp_base64 = get_base64_image('static/assets/images/kenet_stamp.png')
+
+        # Render the HTML template
+        html_string = render_to_string(self.template_name, {
+            'checkout': checkout,
+            'cart_items': cart_items,
+            'logo_base64': logo_base64,
+            'stamp_base64': stamp_base64,
+        })
+
+        # Generate the PDF
+        pdf = HTML(string=html_string).write_pdf()
+
+        # Save the PDF to the model
+        pdf_file = ContentFile(pdf)
+        pdf_filename = f"release_form_{checkout.id}.pdf"
+        checkout.pdf_file.save(pdf_filename, pdf_file, save=True)
+
+        # Return a response to confirm the save
+        return HttpResponse(f"PDF saved as {pdf_filename}.")
+
 
     
 class ApproveCheckoutView(APIView):
@@ -611,7 +677,7 @@ class ReturnFaultyAssetView(APIView):
                 assets=asset,
                 date_created=timezone.now(),
                 person_moving=self.request.user,
-                comments=checkout.remarks,
+                # comments=checkout.remarks,
                 serial_number=asset.serial_number,
                 asset_description = asset.asset_description,
                 asset_description_model = asset.asset_description_model,
@@ -684,7 +750,7 @@ class ReturnDecomissionedAssetView(APIView):
                 assets=asset,
                 date_created=timezone.now(),
                 person_moving=self.request.user,
-                comments=checkout.remarks,
+                # comments=checkout.remarks,
                 serial_number=asset.serial_number,
                 asset_description = asset.asset_description,
                 asset_description_model = asset.asset_description_model,
@@ -753,3 +819,37 @@ def download_locations_as_excel(request):
     # Save workbook to response
     workbook.save(response)
     return response
+
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from django.core.files.base import ContentFile
+from .models import SavedPDF
+import io
+
+def save_pdf(request):
+    if request.method == 'POST':
+        # Get user from the request
+        # user = request.user
+        
+        # Generate the PDF content from the template
+        html = render_to_string('template_name.html', {'checkout': request.POST.get('checkout_data')})
+        pdf_file = io.BytesIO()
+        pisa_status = pisa.CreatePDF(html, dest=pdf_file)
+        
+        if not pisa_status.err:
+            pdf_file.seek(0)
+            pdf_filename = f"release_form.pdf"
+            saved_pdf = SavedPDF.objects.create(
+                # user=user,
+                pdf_file=ContentFile(pdf_file.read(), name=pdf_filename)
+            )
+            return JsonResponse({'message': 'PDF saved successfully', 'pdf_id': saved_pdf.id}, status=201)
+        else:
+            return JsonResponse({'error': 'Failed to generate PDF'}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
