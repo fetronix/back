@@ -57,14 +57,14 @@ admin.site.register(SavedPDF)
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     # Display 'name' and 'name_alias' in the list view
-    list_display = ('name', 'name_alias')
+    list_display = ('name', 'name_alias','location_code')
 
     # Add search functionality for 'name' and 'name_alias'
-    search_fields = ('name', 'name_alias')
+    search_fields = ('name', 'name_alias','location_code')
 
     # If you want to filter by other fields, add them to 'list_filter'
     # (Assumes there are fields like 'created_at' or other categorical fields)
-    list_filter = ('name', 'name_alias')
+    list_filter = ('name', 'name_alias','location_code')
     
     # Set default ordering alphabetically by 'name' (A to Z)
     ordering = ('name',)  # Add '-name' for Z to A ordering

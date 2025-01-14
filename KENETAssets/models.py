@@ -116,18 +116,47 @@ class Category(models.Model):
             verbose_name = 'Category'
             verbose_name_plural = 'Categories'
 
+from django.db import models, transaction
+from django.db.models import Max
+import logging
+
+logger = logging.getLogger(__name__)
+
 class Location(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    name_alias = models.CharField(max_length=100,unique=True)
+    name_alias = models.CharField(max_length=100, unique=True)
+    location_code = models.CharField(max_length=10,unique=True,  editable=False, blank=True)  # KLC ID field
 
     def __str__(self):
         return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        # Generate a unique KLC ID if not already set
+        if not self.location_code:
+            with transaction.atomic():
+                # Fetch the maximum value of location_code
+                last_code = Location.objects.aggregate(Max('location_code'))['location_code__max']
+                if last_code:
+                    try:
+                        # Extract the integer part (e.g., from "KLC001" to 1)
+                        last_id = int(last_code[3:])
+                        new_id = last_id + 1
+                    except ValueError:
+                        logger.error(f"Invalid location_code format: {last_code}")
+                        new_id = 1
+                else:
+                    new_id = 1
+
+                # Format as KLC ID (e.g., "KLC001")
+                self.location_code = f'KLC{new_id:03d}'
+                logger.info(f"Generated location_code: {self.location_code}")
+
+        super().save(*args, **kwargs)
+
     class Meta:
-            verbose_name = 'Location'
-            verbose_name_plural = 'Locations'
-            
-    
-            
+        verbose_name = 'Location'
+        verbose_name_plural = 'Locations'
+
 
 
 class Assets(models.Model):
