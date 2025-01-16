@@ -69,6 +69,32 @@ class LocationAdmin(admin.ModelAdmin):
     # Set default ordering alphabetically by 'name' (A to Z)
     ordering = ('name',)  # Add '-name' for Z to A ordering
     
+    # def custom_action(self, obj):
+    #     # If the asset has already been sent to ERP, show a green button with a new label
+    #     if obj.sent_to_erp:
+    #         return format_html(
+    #             '<button class="ui green button" type="button" disabled>Location Sent to ERP</button>'
+    #         )
+    #     else:
+    #         # Otherwise, show the normal "Send to ERP" button
+    #         url = reverse('create_fixed_asset', args=[obj.pk])  # URL for the ERP creation view
+    #         return format_html(
+    #             '<a href="{0}" class="ui blue button" type="button">Send to E.R.P</a>',
+    #             url
+    #         )
+
+    # custom_action.short_description = 'Send to E.R.P'
+    # custom_action.allow_tags = True
+
+    # # Override the save model to update `sent_to_erp` field after sending data to ERP
+    # def save_model(self, request, obj, form, change):
+    #     if change and 'sent_to_erp' not in form.changed_data:  # Only update if the object is saved
+    #         if obj.sent_to_erp:  # Check if the status is already sent to ERP
+    #             # Optional: Add your logic to update or trigger your ERP-related functionality here.
+    #             pass
+    #     super().save_model(request, obj, form, change)
+    
+    
 admin.site.register(Delivery)
 admin.site.register(Cart)
 class CheckoutAdmin(admin.ModelAdmin):

@@ -125,6 +125,7 @@ logger = logging.getLogger(__name__)
 class Location(models.Model):
     name = models.CharField(max_length=100, unique=True)
     name_alias = models.CharField(max_length=100, unique=True)
+    # sent_to_erp = models.BooleanField(default=False)
     location_code = models.CharField(max_length=10,unique=True,  editable=False, blank=True)  # KLC ID field
 
     def __str__(self):
