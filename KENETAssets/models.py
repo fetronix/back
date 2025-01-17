@@ -217,6 +217,7 @@ class Assets(models.Model):
             
 
 
+
 class Cart(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     asset = models.ForeignKey(Assets, on_delete=models.CASCADE)
@@ -227,20 +228,16 @@ class Cart(models.Model):
 
     class Meta:
         unique_together = ('user', 'asset')  # Ensures an asset can only be in a user's cart once
-        
-    
-    class Meta:
         verbose_name = 'Dispatch Basket'
         verbose_name_plural = 'Dispatch Baskets'
-        # ordering = ['-date_created']  # Orders by most recent movements first
+        # ordering = ['-date_created']  # Uncomment if you want to order by date_created (not defined in the model)
 
-
-def get_base64_image(image_field):
-    if image_field:
-        with open(image_field.path, 'rb') as img:
-            return base64.b64encode(img.read()).decode('utf-8')
-    return None
-
+    def get_base64_image(self, image_field):
+        """Converts an image field to a base64 encoded string."""
+        if image_field:
+            with open(image_field.path, 'rb') as img:
+                return base64.b64encode(img.read()).decode('utf-8')
+        return None
 
 class Checkout(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
