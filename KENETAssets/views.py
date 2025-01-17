@@ -34,6 +34,9 @@ import os
 import base64
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.core.paginator import Paginator
+from django.db.models import Q
+
 
 
 class LoginView(APIView):
@@ -592,18 +595,49 @@ def login_view(request):
     
     return render(request, 'login.html')
 
+from django.db.models import Q, F
+from django.db.models.functions import Lower
+
 def home_view(request):
-    assets = Assets.objects.all()  # Retrieve all checkout records
+    search_query = request.GET.get('search', '').lower()  # Convert search query to lowercase
+    status_filter = request.GET.get('status', '').lower()  # Convert status filter to lowercase
+    location_filter = request.GET.get('location', '').lower()  # Convert location filter to lowercase
+
+    # Start with all assets
+    assets_list = Assets.objects.all()
+
+    # Apply search query
+    if search_query:
+        assets_list = assets_list.filter(
+            Q(asset_description__icontains=search_query) |
+            Q(serial_number__icontains=search_query) |
+            Q(kenet_tag__icontains=search_query)
+        )
+    
+    # Apply status filter
+    if status_filter:
+        assets_list = assets_list.filter(status__iexact=status_filter)
+
+    # Apply location filter
+    if location_filter:
+        assets_list = assets_list.filter(
+            Q(location__name__icontains=location_filter) | 
+            Q(location__name_alias__icontains=location_filter) |
+            Q(location__location_code__icontains=location_filter)
+        )
+
+    # Paginate with 10 assets per page
+    paginator = Paginator(assets_list, 10)
+    page_number = request.GET.get('page')  # Get current page
+    assets = paginator.get_page(page_number)  # Get paginated assets
+
     return render(request, 'home.html', {
         'user': request.user,
-        'assets': assets  # Pass checkouts to the template
+        'assets': assets,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'location_filter': location_filter,
     })
-    
-
-
-
-
-
 
 def logout_view(request):
     logout(request)

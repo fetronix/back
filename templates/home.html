@@ -46,6 +46,9 @@
                         <a class="nav-link" href="#">About</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#">view release forms</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'kenet_release_form' %}">Release Form</a>
                     </li>
                     {% if user.is_authenticated %}
@@ -58,10 +61,43 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="container mt-5">
         <h1>Assets List</h1>
-
+        
+        <!-- Search and Filter Form -->
+        <form method="get" class="row mb-4">
+            <div class="col-md-4">
+                <input 
+                    type="text" 
+                    name="search" 
+                    value="{{ search_query }}" 
+                    class="form-control" 
+                    placeholder="Search assets"
+                >
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">Filter by Status</option>
+                    <option value="instore" {% if status_filter == "instore" %}selected{% endif %}>In Store</option>
+                    <option value="onsite" {% if status_filter == "onsite" %}selected{% endif %}>On Site</option>
+                    <option value="faulty" {% if status_filter == "faulty" %}selected{% endif %}>Faulty</option>
+                    <option value="pendingDispatch" {% if status_filter == "pendingDispatch" %}selected{% endif %}>Pending Dispatch</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input 
+                    type="text" 
+                    name="location" 
+                    value="{{ location_filter }}" 
+                    class="form-control" 
+                    placeholder="Filter by Location"
+                >
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </form>
+        
         <!-- Display the list of assets -->
         <table class="table table-bordered">
             <thead>
@@ -73,7 +109,7 @@
                     <th>Status</th>
                     <th>Category</th>
                     <th>Date Received</th>
-                    <th>Actions</th> <!-- Add a column for the action button -->
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,25 +122,44 @@
                         <td>{{ asset.status }}</td>
                         <td>{{ asset.category }}</td>
                         <td>{{ asset.date_received }}</td>
-                       <td>
-                        {% if asset.sent_to_erp %}
-                        <!-- Disabled Button for Sent Assets -->
-                        <button class="btn btn-success" disabled>Data Sent to ERP</button>
-                        {% else %}
-                            <!-- Active Button for Unsynced Assets -->
-                            <a href="{% url 'create_fixed_asset' asset.id %}" class="btn btn-primary">Send To ERP</a>
-                        {% endif %}
-                        </td> 
+                        <td>
+                            {% if asset.sent_to_erp %}
+                                <button class="btn btn-success" disabled>Data Sent to ERP</button>
+                            {% else %}
+                                <a href="{% url 'create_fixed_asset' asset.id %}" class="btn btn-primary">Send To ERP</a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="7" class="text-center">No assets available.</td>
+                        <td colspan="8" class="text-center">No assets available.</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-
+        
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if assets.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo;&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ assets.previous_page_number }}">&laquo;</a></li>
+                {% endif %}
+                {% for page_num in assets.paginator.page_range %}
+                    <li class="page-item {% if page_num == assets.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
+                {% endfor %}
+                {% if assets.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ assets.next_page_number }}">&raquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ assets.paginator.num_pages }}">&raquo;&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
+    
+    
+    
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
