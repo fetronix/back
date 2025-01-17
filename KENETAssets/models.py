@@ -1,14 +1,14 @@
 # models.py
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
 import base64
 from django.core.files.base import ContentFile
 from django.core.exceptions import ValidationError
 from django.utils.html import format_html
-from django.conf import settings
+from django.db import models, transaction
+from django.db.models import Max
+import logging
 
 
 
@@ -116,9 +116,7 @@ class Category(models.Model):
             verbose_name = 'Category'
             verbose_name_plural = 'Categories'
 
-from django.db import models, transaction
-from django.db.models import Max
-import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -236,8 +234,6 @@ class Cart(models.Model):
         verbose_name_plural = 'Dispatch Baskets'
         # ordering = ['-date_created']  # Orders by most recent movements first
 
-import base64
-from django.core.files.base import ContentFile
 
 def get_base64_image(image_field):
     if image_field:
