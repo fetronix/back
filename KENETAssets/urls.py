@@ -67,5 +67,6 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('download-locations/', download_locations_as_excel, name='download_locations'),
     path('save-pdf/', save_pdf, name='save_pdf'),
+    path('pdfs/', view_all_pdfs, name='view_all_pdfs'),
     
 ]

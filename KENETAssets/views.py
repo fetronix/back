@@ -638,6 +638,16 @@ def home_view(request):
         'status_filter': status_filter,
         'location_filter': location_filter,
     })
+    
+    
+def view_all_pdfs(request):
+    # Filter Checkouts with saved PDF files
+    checkouts_with_pdfs = Checkout.objects.filter(pdf_file__isnull=False)
+    
+    context = {
+        'checkouts': checkouts_with_pdfs
+    }
+    return render(request, 'view_pdfs.html', context)
 
 def logout_view(request):
     logout(request)
