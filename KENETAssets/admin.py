@@ -100,15 +100,20 @@ admin.site.register(Cart)
 class FibreInfrastructureAdmin(admin.ModelAdmin):
     list_display = (
         'location_code',
+        'Search_Description',
+        'Acquisition_Date',
         'start_location',
         'intermediary_locations',
         'destination_location',
+        
+        # Include this field in the displayed columns
     )
     search_fields = (
         'location_code',
         'start_location',
         'destination_location',
         'intermediary_locations',
+        'Search_Description',  # Add this field to searchable fields
     )
     list_filter = (
         'start_location',
@@ -116,7 +121,8 @@ class FibreInfrastructureAdmin(admin.ModelAdmin):
     )
     ordering = ('location_code',)
 
-admin.site.register(FibreInfrastructure, FibreInfrastructureAdmin)
+
+admin.site.register(Fibre, FibreInfrastructureAdmin)
 class CheckoutAdmin(admin.ModelAdmin):
     list_display = ('user', 'checkout_date', 'quantity_required', 'quantity_issued', 'signature_image')
     list_filter = ('checkout_date',)

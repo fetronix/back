@@ -363,7 +363,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class FibreInfrastructure(models.Model):
+class Fibre(models.Model):
+    Search_Description = models.CharField(max_length=255,blank=False,null=False)
+    Acquisition_Date = models.DateTimeField(auto_now_add=True)
     start_location = models.CharField(max_length=255, verbose_name="Start Location")
     intermediary_locations = models.TextField(
         blank=True, null=True, 
@@ -378,7 +380,7 @@ class FibreInfrastructure(models.Model):
         if not self.location_code:
             with transaction.atomic():
                 # Fetch the maximum value of location_code
-                last_code = FibreInfrastructure.objects.aggregate(Max('location_code'))['location_code__max']
+                last_code = Fibre.objects.aggregate(Max('location_code'))['location_code__max']
                 if last_code:
                     try:
                         # Extract the integer part (e.g., from "FLC001" to 1)
