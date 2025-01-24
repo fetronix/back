@@ -299,11 +299,11 @@ class Checkout(models.Model):
         return '/static/default_signature.png'  # Fallback image URL if no signature is found
 
     
-    def get_user_signature_base64(self):
-        return get_base64_image(self.user_signature_image)
+    # def get_user_signature_base64(self):
+    #     return get_base64_image(self.user_signature_image)
 
-    def get_signature_base64(self):
-        return get_base64_image(self.signature_image)
+    # def get_signature_base64(self):
+    #     return get_base64_image(self.signature_image)
 
     def update_quantities(self, quantity_required: int, quantity_issued: int):
         if quantity_issued > quantity_required:
