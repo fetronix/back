@@ -97,6 +97,26 @@ class LocationAdmin(admin.ModelAdmin):
     
 admin.site.register(Delivery)
 admin.site.register(Cart)
+class FibreInfrastructureAdmin(admin.ModelAdmin):
+    list_display = (
+        'location_code',
+        'start_location',
+        'intermediary_locations',
+        'destination_location',
+    )
+    search_fields = (
+        'location_code',
+        'start_location',
+        'destination_location',
+        'intermediary_locations',
+    )
+    list_filter = (
+        'start_location',
+        'destination_location',
+    )
+    ordering = ('location_code',)
+
+admin.site.register(FibreInfrastructure, FibreInfrastructureAdmin)
 class CheckoutAdmin(admin.ModelAdmin):
     list_display = ('user', 'checkout_date', 'quantity_required', 'quantity_issued', 'signature_image')
     list_filter = ('checkout_date',)

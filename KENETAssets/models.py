@@ -10,6 +10,8 @@ from django.db import models, transaction
 from django.db.models import Max
 import logging
 
+# from KENETAssets.views import get_base64_image
+
 
 
 class UserRoles(models.TextChoices):
@@ -353,3 +355,51 @@ class SavedPDF(models.Model):
         return f"PDF by {self.user.username} on {self.created_at}"
 
 
+
+
+from django.db import models, transaction
+from django.db.models import Max
+import logging
+
+logger = logging.getLogger(__name__)
+
+class FibreInfrastructure(models.Model):
+    start_location = models.CharField(max_length=255, verbose_name="Start Location")
+    intermediary_locations = models.TextField(
+        blank=True, null=True, 
+        verbose_name="Intermediary Locations",
+        help_text="Comma-separated list of intermediary locations."
+    )
+    destination_location = models.CharField(max_length=255, verbose_name="Destination Location")
+    location_code = models.CharField(max_length=10, unique=True, editable=False, verbose_name="Fibre Location Code")
+
+    def save(self, *args, **kwargs):
+        # Generate a unique location_code if not already set
+        if not self.location_code:
+            with transaction.atomic():
+                # Fetch the maximum value of location_code
+                last_code = FibreInfrastructure.objects.aggregate(Max('location_code'))['location_code__max']
+                if last_code:
+                    try:
+                        # Extract the integer part (e.g., from "FLC001" to 1)
+                        last_id = int(last_code[3:])
+                        new_id = last_id + 1
+                    except ValueError:
+                        logger.error(f"Invalid location_code format: {last_code}")
+                        new_id = 1
+                else:
+                    new_id = 1
+
+                # Format as KLC ID (e.g., "KLC001")
+                self.location_code = f'FLC{new_id:03d}'
+                logger.info(f"Generated location_code: {self.location_code}")
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.location_code} - {self.start_location} to {self.destination_location}"
+
+    class Meta:
+        verbose_name = "Fibre Infrastructure"
+        verbose_name_plural = "Fibre Infrastructures"
+        ordering = ['location_code']

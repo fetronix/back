@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Load the Excel file
-        file_path = "media/FA_Cleaned_Final.xlsx"  # Replace with the actual path
+        file_path = "media/locs.xlsx"  # Replace with the actual path
         data = pd.read_excel(file_path)
 
         # Iterate through the data and save it to the database

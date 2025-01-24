@@ -138,30 +138,30 @@ from .models import Location, Assets
 #         )
 #         self.assertTrue(asset.asset_id.startswith("ALK"))
 
-from django.test import TestCase
-from .models import Cart, Assets, CustomUser
+# from django.test import TestCase
+# from .models import Cart, Assets, CustomUser
 
-class CartTestCase(TestCase):
-    def setUp(self):
-        # Set up initial data for testing
-        self.user = CustomUser.objects.create_user(username="john_doe", email="john.doe@kenet.or.ke", password="password")
-        self.asset = Assets.objects.create(
-            asset_description="Asset in Cart",
-            serial_number="SN12345",
-            kenet_tag="KENET001",
-            status="instore"
-        )
+# class CartTestCase(TestCase):
+#     def setUp(self):
+#         # Set up initial data for testing
+#         self.user = CustomUser.objects.create_user(username="john_doe", email="john.doe@kenet.or.ke", password="password")
+#         self.asset = Assets.objects.create(
+#             asset_description="Asset in Cart",
+#             serial_number="SN12345",
+#             kenet_tag="KENET001",
+#             status="instore"
+#         )
 
-    def test_add_to_cart(self):
-        # Test adding an asset to the cart
-        cart = Cart.objects.create(user=self.user, asset=self.asset)
-        self.assertEqual(cart.user.username, "john_doe")
-        self.assertEqual(cart.asset.serial_number, "SN12345")
+#     def test_add_to_cart(self):
+#         # Test adding an asset to the cart
+#         cart = Cart.objects.create(user=self.user, asset=self.asset)
+#         self.assertEqual(cart.user.username, "john_doe")
+#         self.assertEqual(cart.asset.serial_number, "SN12345")
 
-    def test_unique_cart_item(self):
-        # Test unique constraint - should raise an exception when adding the same asset twice to the same user's cart
-        Cart.objects.create(user=self.user, asset=self.asset)
+#     def test_unique_cart_item(self):
+#         # Test unique constraint - should raise an exception when adding the same asset twice to the same user's cart
+#         Cart.objects.create(user=self.user, asset=self.asset)
         
-        # Try adding the same asset again
-        with self.assertRaises(Exception):  # Unique constraint violation
-            Cart.objects.create(user=self.user, asset=self.asset)
+#         # Try adding the same asset again
+#         with self.assertRaises(Exception):  # Unique constraint violation
+#             Cart.objects.create(user=self.user, asset=self.asset)

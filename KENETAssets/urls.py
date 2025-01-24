@@ -53,6 +53,7 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('kenet-release-form/', kenet_release_form_view, name='kenet_release_form'),
     path('assets/<int:asset_id>/return_faulty/', ReturnFaultyAssetView.as_view(), name='return-faulty-asset'),
+    path('assets/<int:asset_id>/return_store/', ReturnStoreAssetView.as_view(), name='return-store-asset'),
     path('assets/<int:asset_id>/return_decommissioned/', ReturnDecomissionedAssetView.as_view(), name='return-decommissioned-asset'),
     
     

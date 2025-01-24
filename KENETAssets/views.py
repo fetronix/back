@@ -37,6 +37,16 @@ from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.db.models import Q
 
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from django.core.files.base import ContentFile
+from .models import SavedPDF
+import io
+import openpyxl
+from openpyxl.styles import Alignment
+from django.http import HttpResponse
+from .models import Location
 
 
 class LoginView(APIView):
@@ -757,6 +767,81 @@ class ReturnFaultyAssetView(APIView):
         except Assets.DoesNotExist:
             return Response({"detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)
 
+
+class ReturnStoreAssetView(APIView):
+    allowed_methods = ['GET', 'POST', 'PATCH']  # Allow PATCH as well
+    
+    def get(self, request, asset_id, *args, **kwargs):
+        # Fetch and return asset details for GET requests
+        asset = get_object_or_404(Assets, id=asset_id)
+        # Assuming you have a serializer to return the asset data
+        # serializer = AssetSerializer(asset)
+        return Response({"asset_id": asset.id, "status": asset.status}, status=status.HTTP_200_OK)
+    
+    def post(self, request, asset_id, *args, **kwargs):
+        # Mark the asset as faulty and remove it from cart/checkout
+        return self.handle_faulty_asset(request, asset_id)
+    
+    def patch(self, request, asset_id, *args, **kwargs):
+        # Handle partial updates (you can mark as faulty and remove from cart)
+        return self.handle_faulty_asset(request, asset_id)
+    
+    def handle_faulty_asset(self, request, asset_id):
+        try:
+            # Get the asset by ID
+            asset = get_object_or_404(Assets, id=asset_id)
+
+            # Check if the asset's status is already 'faulty'
+            if asset.status == 'instore':
+                return Response(
+                    {"detail": "Asset is already marked as instore."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Mark asset status as 'faulty'
+            asset.status = 'instore'
+            
+            AssetsMovement.objects.create(
+                assets=asset,
+                date_created=timezone.now(),
+                person_moving=self.request.user,
+                # comments=checkout.remarks,
+                serial_number=asset.serial_number,
+                asset_description = asset.asset_description,
+                asset_description_model = asset.asset_description_model,
+                kenet_tag=asset.kenet_tag,
+                status=asset.status,  # Set the movement record status to "onsite"
+                location=asset.location.name if asset.location else None,
+                new_location="UON Store"
+            )
+
+            # Check if the asset exists in any checkout or cart
+            cart_item = Cart.objects.filter(asset=asset).first()
+            checkout = Checkout.objects.filter(cart_items__asset=asset).first()
+
+            with transaction.atomic():
+                if checkout:
+                    # Remove the asset from the checkout
+                    checkout.cart_items.remove(cart_item)
+                    checkout.save()
+
+                if cart_item:
+                    # Delete the cart item (if not deleted above)
+                    cart_item.delete()
+
+                # Revert `new_location` to null
+                asset.new_location = "UON Store"
+                asset.save()
+
+            return Response(
+                {"detail": "Asset has been marked as instore and removed from any checkouts or carts."},
+                status=status.HTTP_200_OK
+            )
+
+        except Assets.DoesNotExist:
+            return Response({"detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
 class ReturnDecomissionedAssetView(APIView):
     allowed_methods = ['GET', 'POST', 'PATCH']  # Allow PATCH as well
     
@@ -831,10 +916,7 @@ class ReturnDecomissionedAssetView(APIView):
             return Response({"detail": "Asset not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-import openpyxl
-from openpyxl.styles import Alignment
-from django.http import HttpResponse
-from .models import Location
+
 
 def download_locations_as_excel(request):
     # Create a workbook and worksheet
@@ -864,13 +946,6 @@ def download_locations_as_excel(request):
     workbook.save(response)
     return response
 
-
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from xhtml2pdf import pisa
-from django.core.files.base import ContentFile
-from .models import SavedPDF
-import io
 
 def save_pdf(request):
     if request.method == 'POST':
