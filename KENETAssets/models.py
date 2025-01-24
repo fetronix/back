@@ -241,6 +241,12 @@ class Cart(models.Model):
                 return base64.b64encode(img.read()).decode('utf-8')
         return None
 
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+import base64
+from django.db import models
+from django.conf import settings
+
 class Checkout(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     cart_items = models.ManyToManyField('Cart', related_name='checkouts')
