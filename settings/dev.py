@@ -34,12 +34,23 @@ ALLOWED_HOSTS = ['*']
 
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'testkenetdb',
+        'USER': 'postgres',
+        'PASSWORD': 'k3n3t',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 STATIC_URL = 'static/'
 # The directory where static files are collected

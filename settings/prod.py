@@ -30,18 +30,27 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kenet',
-        'USER':'postgres',
-        'PASSWORD':'k3n3t',
-        'HOST':'localhost',
-        'PORT':'5432'
+        'NAME': 'livekenetdb',
+        'USER': 'postgres',
+        'PASSWORD': 'k3n3t',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'kenet',
+#         'USER':'postgres',
+#         'PASSWORD':'k3n3t',
+#         'HOST':'localhost',
+#         'PORT':'5432'
+#     }
+# }
 
 STATIC_URL = 'static/'
 # The directory where static files are collected
