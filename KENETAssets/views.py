@@ -386,19 +386,32 @@ class CheckoutDetailView(DetailView):
     template_name = 'kenet_release_form.html'  # Create this template for displaying the details
     context_object_name = 'checkout'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['logo_url'] = '/static/assets/images/logo.png'  # Adding logo URL
-    #     context['stamp_url'] = '/static/assets/images/kenet_stamp.png'  # Adding stamp URL
-    #     return context
-
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         # Convert images to base64 strings
         context['logo_base64'] = get_base64_image('static/assets/images/logo.png')
         context['stamp_base64'] = get_base64_image('static/assets/images/kenet_stamp.png')
+        
+        # Add user signature to the context
+        checkout = self.get_object()  # Get the current Checkout object
+        user_signature = checkout.user_signature_image
+        admin_signature = checkout.signature_image
+
+        # Check if the user signature exists and convert it to base64
+        if user_signature:
+            user_signature_base64 = get_base64_image(user_signature.path)
+            context['user_signature_base64'] = user_signature_base64
+        else:
+            context['user_signature_base64'] = None  # or some default value
+
+        # Check if the admin signature exists and convert it to base64
+        if admin_signature:
+            admin_signature_base64 = get_base64_image(admin_signature.path)
+            context['admin_signature_base64'] = admin_signature_base64
+        else:
+            context['admin_signature_base64'] = None  # or some default value
+                
         return context
 
     def get(self, request, *args, **kwargs):
@@ -412,22 +425,39 @@ class CheckoutDetailView(DetailView):
         checkout = self.get_object()
         cart_items = checkout.cart_items.all()
 
-        # Get base64 images
+        # Get base64 images for logo and stamp
         logo_base64 = get_base64_image('static/assets/images/logo.png')
         stamp_base64 = get_base64_image('static/assets/images/kenet_stamp.png')
 
-        # Render the HTML template
+        # Get user and admin signatures, if available
+        user_signature = checkout.user_signature_image
+        admin_signature = checkout.signature_image
+
+        # Convert user and admin signatures to base64
+        if user_signature:
+            user_signature_base64 = get_base64_image(user_signature.path)
+        else:
+            user_signature_base64 = None  # or a default signature if needed
+
+        if admin_signature:
+            admin_signature_base64 = get_base64_image(admin_signature.path)
+        else:
+            admin_signature_base64 = None  # or a default signature if needed
+
+        # Render the HTML template with all the necessary context (checkout, cart items, images)
         html_string = render_to_string(self.template_name, {
             'checkout': checkout,
             'cart_items': cart_items,
             'logo_base64': logo_base64,
             'stamp_base64': stamp_base64,
+            'user_signature_base64': user_signature_base64,
+            'admin_signature_base64': admin_signature_base64,
         })
 
-        # Generate the PDF
+        # Generate the PDF from the HTML string
         pdf = HTML(string=html_string).write_pdf()
 
-        # Save the PDF to the model
+        # Save the generated PDF to the model
         pdf_file = ContentFile(pdf)
         pdf_filename = f"release_form_{checkout.id}.pdf"
         checkout.pdf_file.save(pdf_filename, pdf_file, save=True)

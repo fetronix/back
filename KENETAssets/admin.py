@@ -53,7 +53,6 @@ class AssetsAdmin(admin.ModelAdmin):
 admin.site.register(Assets, AssetsAdmin)
 
 admin.site.register(Category)
-admin.site.register(SavedPDF)
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     # Display 'name' and 'name_alias' in the list view

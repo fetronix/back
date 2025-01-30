@@ -1,23 +1,37 @@
+# locations/management/commands/export_locations_to_xlsx.py
+import openpyxl
 from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
+from KENETAssets.models import Location
 
 class Command(BaseCommand):
-    help = 'Exports the custom User model data into a text file'
+    help = 'Exports all locations with their ID numbers to an Excel file'
 
     def handle(self, *args, **kwargs):
-        # Get the custom User model
-        User = get_user_model()
+        # Fetch all locations from the database
+        locations = Location.objects.all()
 
-        # File path for the exported data
-        file_path = 'media/users.txt'
+        # Create a new workbook and active sheet
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.title = 'Locations'
 
-        # Fetch all users
-        users = User.objects.all()
+        # Add the headers to the first row
+        sheet['A1'] = 'ID'
+        sheet['B1'] = 'Location Code'
+        sheet['C1'] = 'Name'
+        sheet['D1'] = 'Name Alias'
 
-        # Write data to a text file
-        with open(file_path, 'w') as file:
-            for user in users:
-                # Adjust fields based on your custom User model
-                file.write(f"{user.id}\t{user.username}\t{user.email}\t{user.first_name}\t{user.last_name}\n")
+        # Populate the rows with location data
+        row = 2  # Start from the second row
+        for location in locations:
+            sheet[f'A{row}'] = location.id
+            sheet[f'B{row}'] = location.location_code
+            sheet[f'C{row}'] = location.name
+            sheet[f'D{row}'] = location.name_alias
+            row += 1
 
-        self.stdout.write(self.style.SUCCESS(f'Successfully exported users to {file_path}'))
+        # Save the workbook to a file
+        filename = 'locations.xlsx'
+        workbook.save(filename)
+
+        self.stdout.write(self.style.SUCCESS(f'Successfully exported locations to {filename}'))

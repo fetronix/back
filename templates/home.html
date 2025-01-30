@@ -48,9 +48,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'view_all_pdfs' %}">view release forms</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kenet_release_form' %}">Release Form</a>
-                    </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="btn pill-button" href="{% url 'logout' %}">Logout</a>

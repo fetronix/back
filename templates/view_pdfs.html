@@ -3,37 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View PDFs</title>
-    {% comment %} <link rel="stylesheet" href="{% static 'styles.css' %}"> {% endcomment %}
+    <title>View PDFs - Dispatch List</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            color: #4e73df;
+        }
+
+        table {
+            width: 100%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4e73df;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        td {
+            background-color: #f9f9f9;
+            font-size: 1rem;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+
+        .no-data {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #ff6f61;
+        }
+
+        .table-container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .table-container p {
+            font-size: 1.1rem;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+
     <h1>PDF Files in Dispatch List</h1>
     
-    {% if checkouts %}
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Dispatched By</th>
-                    <th>Checkout Date</th>
-                    <th>PDF File</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for checkout in checkouts %}
+    <div class="table-container">
+        {% if checkouts %}
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ checkout.id }}</td>
-                        <td>{{ checkout.user.username }}</td>
-                        <td>{{ checkout.checkout_date }}</td>
-                        <td>
-                            <a href="{{ checkout.pdf_file.url }}" target="_blank">View PDF</a>
-                        </td>
+                        <th>ID</th>
+                        <th>Dispatched By</th>
+                        <th>Checkout Date</th>
+                        <th>PDF File</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No PDFs found in the Dispatch List.</p>
-    {% endif %}
+                </thead>
+                <tbody>
+                    {% for checkout in checkouts %}
+                        <tr>
+                            <td>{{ checkout.id }}</td>
+                            <td>{{ checkout.user.username }}</td>
+                            <td>{{ checkout.checkout_date }}</td>
+                            <td>
+                                <a href="{{ checkout.pdf_file.url }}" target="_blank">View PDF</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">No PDFs found in the Dispatch List.</p>
+        {% endif %}
+    </div>
+
 </body>
 </html>

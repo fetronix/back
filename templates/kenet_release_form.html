@@ -129,7 +129,7 @@
 </head>
 <body>
 <div class="container">
-    {% csrf_token %}
+
     <div class="header">
         <h1>EQUIPMENT RELEASE FORM FOR KENET</h1>
         <img src="{{ logo_base64 }}"  alt="KENET Logo">
@@ -166,7 +166,7 @@
                     {% endif %}
                 {% endfor %}
                 <td>
-                    <img src="data:image/png;base64,{{ checkout.get_user_signature_base64 }}" alt="Signature" class="signature-image" />
+                    <img src="{{ user_signature_base64 }}" width="100px" height="50px" alt="KENET Stamp">
                 </td>
             </tr>
         </tbody>
@@ -189,7 +189,7 @@
                 <td>1</td>
                 <td>{{ cart_item.asset.serial_number }}</td>
                 <td>{{ cart_item.asset.kenet_tag }}</td>
-                <td>{{ cart_item.asset.going_location }}</td>
+                <td>{{ cart_item.asset.destination_location }}</td>
             </tr>
         {% empty %}
             <tr>
@@ -209,7 +209,12 @@
             <td>{{ checkout.verifier_user }}</td>
             
             <td>
-                <img src="{{ checkout.get_signature_image_url }}" alt="Signature" class="signature-image" />
+                {% if user_signature_base64 %}
+                    <img src="{{ admin_signature_base64 }}" width="100px" height="50px" alt="admin Signature" />
+                {% else %}
+                    <p>No admin signature available.</p>
+                {% endif %}
+                
             </td>
             <td>{{ checkout.checkout_date|date:"F d, Y" }}</td>
         </tr>
@@ -220,7 +225,7 @@
 <div class="footer">
     <p>Version 1.0.0   Reference: KS/ERF</p>
     <img src="{{ stamp_base64 }}" width="200px" height="200px" alt="KENET Stamp">
-    {% comment %} <button id="print_button" onclick="printForm()">Print</button> {% endcomment %}
+    
 </div>
 <button id="print_button" class="outlined-button" onclick="savePdfAndPrint({{ checkout.id }})">Print</button>
 
